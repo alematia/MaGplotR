@@ -7,6 +7,6 @@ Mandatory arguments:<br/>
 
 Optional arguments:<br/>
 -c: <br/>
--p: <br/>
+-p: (plot format): Just write one among these (png is default): png , pdf, ps, jpeg, tiff, bmp.<br/>
 -o: <br/>
 
