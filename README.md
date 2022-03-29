@@ -3,7 +3,7 @@ A software for Genetic Screens data visualization
 
 # USAGE
 
-Example:
+Example:<br/>
 Rscript ScripsR.R -i results_directory/ -f mg -c path_to_control_file -p png -o output_directory/
 
 
