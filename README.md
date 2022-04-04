@@ -1,5 +1,5 @@
 # ScrispR
-A software for Genetic Screens data visualization
+A software for Multiple Genetic Screens data visualization
 
 # USAGE
 
