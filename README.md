@@ -1,6 +1,9 @@
 # ScrispR
 A software for Multiple Genetic Screens data visualization
 
+[Dependencies](#dependencies)<br/>
+[Usage](#usage)<br/>
+
 ## Dependencies
 You can either install these packages from R terminal or by running the installation script from linux terminal.<br/>
 
