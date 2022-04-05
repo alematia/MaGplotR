@@ -1,11 +1,33 @@
 # ScrispR
 A software for Multiple Genetic Screens data visualization
 
-# USAGE
+## Dependencies
+You can either install these packages from R terminal or by running the installation script.<br/>
+
+- Install from R terminal:<br/>
+```r
+install.packages("optparse")
+install.packages("ggplot2")
+install.packages("tidyr")
+install.packages("reshape2")
+install.packages("dplyr")
+install.packages("stringr")
+install.packages("tidyverse")
+```
+- Install using installation script:<br/>
+Run the following command in Linux terminal:
+```sh
+Rscript installation_scrispr.R
+```
+
+
+
+### USAGE
 
 Example:<br/>
+```
 Rscript ScripsR.R -i path_to_results_directory -f mg -c path_to_control_file -p png -o path_to_output_directory
-
+```
 
 Mandatory arguments:<br/>
 -i (input directory): **path** to the folder where all the test files are located. <br/>
