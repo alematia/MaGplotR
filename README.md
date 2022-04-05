@@ -16,7 +16,7 @@ install.packages("tidyverse")
 ```
 - Install using installation script:<br/>
 Download `installation_scrispr.R` and run the following command in Linux terminal:
-```sh
+```bash
 Rscript installation_scrispr.R
 ```
 
@@ -24,8 +24,8 @@ Rscript installation_scrispr.R
 
 ### USAGE
 
-Example:<br/>
-```
+Example:
+```bash
 Rscript ScripsR.R -i path_to_results_directory -f mg -c path_to_control_file -p png -o path_to_output_directory
 ```
 
