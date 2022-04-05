@@ -2,7 +2,7 @@
 A software for Multiple Genetic Screens data visualization
 
 ## Dependencies
-You can either install these packages from R terminal or by running the installation script.<br/>
+You can either install these packages from R terminal or by running the installation script from linux terminal.<br/>
 
 - Install from R terminal:<br/>
 ```r
@@ -15,7 +15,7 @@ install.packages("stringr")
 install.packages("tidyverse")
 ```
 - Install using installation script:<br/>
-Run the following command in Linux terminal:
+Download `installation_scrispr.R` and run the following command in Linux terminal:
 ```sh
 Rscript installation_scrispr.R
 ```
