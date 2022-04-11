@@ -29,15 +29,15 @@ Rscript installation_scrispr.R
 
 Example:
 ```bash
-Rscript ScripsR.R -i path_to_results_directory -f mg -c path_to_control_file -p png -o path_to_output_directory
+Rscript ScripsR.R -i path_to_results_directory -c path_to_control_file -p png -o path_to_output_directory -s path_to_sgRNA_input_directory
 ```
 
 Mandatory arguments:<br/>
--i (input directory): **path** to the folder where all the test files are located. <br/>
--f (format): specifies the input format. Just write mg for MaGeCK gene_summary files or sb for ScreenBEAM files.<br/>
+-i (input directory): **path** to the folder where gene summary files (test files) are located. <br/>
 
 Optional arguments:<br/>
 -c: (control file): **path** to the control file (no control as default). <br/>
 -p: (plot format): just write one among these (png is default): png , pdf, ps, jpeg, tiff, bmp.<br/>
--o: (output directory): **path** to an existing folder where output files will be saved (input directory default). <br/>
+-o: (output directory): **path** to an existing folder where output files will be saved (input directory default).<br/>
+-s: (sgRNA input directory): **path** to an existing folder where sgRNA summary files are saved.<br/>
 
