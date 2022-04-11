@@ -18,18 +18,12 @@ suppressPackageStartupMessages(library(tidyverse))
 
 parser <- OptionParser()
 
-parser <- add_option(parser, 
-                     opt_str = c("-f", "--format"), 
-                     type = "character",
-                     dest = 'format',
-                     help="Input file format (mageck -mg- or screenbeam -sb-). mageck by default."
-)
 
 parser <- add_option(parser, 
                      opt_str = c("-i", "--inputdirectory"), 
                      type = "character",
                      dest = 'input.directory',
-                     help="Input directory (required). Path to directory where test files are saved."
+                     help="Input directory (required). Path to directory where gene summary test files are saved."
 )
 
 parser <- add_option(parser, 
@@ -37,7 +31,7 @@ parser <- add_option(parser,
                      type = "character",
                      default = NA,
                      dest = 'control.file',
-                     help="A file path to the control experiment."
+                     help="A file path to the control experiment (optional)."
 )
 
 
@@ -46,8 +40,21 @@ parser <- add_option(parser,
                      type = "character",
                      dest = 'output.directory',
                      default = getwd(),
-                     help="Output directory (required). Path to directory where images will be saved."
+                     help="Output directory (optional). Path to directory where images will be saved. Working directory is default."
 )
+
+
+
+parser <- add_option(parser, 
+                     opt_str = c("-s", "--sgrna-inputdirectory"), 
+                     type = "character",
+                     dest = 'sgrna.input.directory',
+                     help="sgRNA input directory (optional). Path to directory where sgRNA summary test files are saved."
+)
+
+
+
+
 
 parser <- add_option(parser, 
                      opt_str = c("-p", "--plotformat"), 
@@ -63,11 +70,11 @@ parser <- add_option(parser,
 opt = parse_args(parser)
 
 
-
-# Set input path
 first_dir <- getwd()  # Get wd.
-input_dir_path = opt$input.directory  # Input test files directory.
-setwd(input_dir_path)  # Set wd to read files.
+
+# Set input directory (gene summary files)
+input_dir_path = opt$input.directory
+
 
 
 # Set output directory
@@ -76,6 +83,17 @@ if(is.null(opt$output.directory)){
 } else {
   output.directory = file.path(opt$output.directory)
 }
+
+
+
+# Set control file path. If no control file is loaded, pass.
+if(!is.null(opt$control.file)){control_file_path <- file.path(opt$control.file)}
+
+
+
+# Set sgRNA input directory
+if(!is.null(opt$sgrna.input.directory)){sgrna_input_dir_path = opt$sgrna.input.directory}
+
 
 
 # Select plot format
@@ -87,35 +105,43 @@ if (opt$plot.format %in% c('png', 'pdf', 'ps', 'jpeg', 'tiff', 'bmp')){
 }
 
 
-# Set control file path. If no control file is loaded, pass.
-if(is.null(opt$control.file)){ 
-} else {
-  control_file_path <- file.path(opt$control.file)
-}
+
+
+
 
 # Read MaGeCK or ScreenBEAM files.
-if (opt$format == "mg") {
-  MaGeCK_files = list.files(pattern="*.txt")
-  input_files_txt = lapply(MaGeCK_files, read.delim)
-  print("Analyzing MaGeCK data...")
-  if(is.na(opt$control.file)){ 
-    control_file_mg <- NULL
-    print("No control file detected.")
+
+setwd(input_dir_path)  # Set wd to read gene summary files.
+MaGeCK_files = list.files(pattern="*.txt")
+input_files_txt = lapply(MaGeCK_files, read.delim)
+print("MaGeCK gene summary data detected.")
+if(is.na(opt$control.file)){ 
+  control_file <- NULL
+  print("No control file detected.")
   } else {
-    control_file_mg <- read.delim(file.path(control_file_path))
-    print("Control file detected")
-  }
-} else if (opt$format == "sb") {
-  ScreenBEAM_files = list.files(pattern="*.csv")
-  input_files_csv <- lapply(ScreenBEAM_files, read.csv)
-  print("Analyzing ScreenBEAM data...")
-} else {print("Error: wrong input format")}
+  control_file <- read.delim(file.path(control_file_path))
+  print("Control file detected")
+}
+
+
+# Read sgRNA summary files.
+if(!is.na(sgrna_input_dir_path)){
+  print("MaGeCK sgRNA data detected.")
+  setwd(sgrna_input_dir_path)  # Set wd to read sgRNA summary files.
+  sgMaGeCK_files = list.files(pattern="*.txt")
+  sginput_files_txt = lapply(sgMaGeCK_files, read.delim)
+  #if(is.na(opt$control.file)){ 
+  #  control_file <- NULL
+  #  print("No control file detected.")
+  #}
+}
+
 
 
 setwd(first_dir)
 
 
-## MaGeCK:
+## MaGeCK gene summary analysis:
 #
 # gene id and its lfc is substracted from each df.
 id_lfc_maker <- function(input_files_txt){
@@ -178,14 +204,15 @@ id_rank_maker_neg <- function(input_files_txt){
 }
 
 
-main_mg <- function(x = input_files_txt, y = control_file_mg){
+main_mg <- function(x = input_files_txt, y = control_file){
+  print("Analyzing MaGeCK gene summary data...")
   sub_input_files_txt <- id_lfc_maker(input_files_txt)
   melted_sub_input_files <- melter(sub_input_files_txt)
   bound <- bind_rows(as.vector(melted_sub_input_files)) # Binds all id_lfc dfs
   #experiments_labs <- xlabs()
   
   ## 1. Boxplot with control if supplied
-  if (is.null(control_file_mg)){
+  if (is.null(control_file)){
     boxplot <- ggplot(bound, aes(variable, y= LFC))+
       geom_boxplot(aes(colour=variable), outlier.shape = NA)+
       geom_jitter(position = position_jitter(width = 0.25) , size=0.005, alpha = 0.05, aes(colour=variable))+
@@ -194,7 +221,7 @@ main_mg <- function(x = input_files_txt, y = control_file_mg){
       theme(legend.position = "None", axis.text.x = element_text(size = 10))#+
     #scale_x_discrete(labels=experiments_labs, )
   } else {
-    sub_control_mg <- data.frame(Control = control_file_mg$id, LFC = control_file_mg$pos.lfc)
+    sub_control_mg <- data.frame(Control = control_file$id, LFC = control_file$pos.lfc)
     melted_control_mg <- reshape2::melt(sub_control_mg, id.vars=2)
     all_data_boxplot_mg <- bind_rows(bound, melted_control_mg)
     boxplot <- ggplot(all_data_boxplot_mg, aes(variable, y= LFC))+
@@ -265,8 +292,8 @@ main_mg <- function(x = input_files_txt, y = control_file_mg){
   print("Heatmap (negative selection) saved in output directory.")
   
   ## Control plots for heatmaps if control file is given
-  if(is.null(control_file_mg)){
-    control_file_mg <- NULL
+  if(is.null(control_file)){
+    control_file <- NULL
   } else {
     ## Control LFC plot for positive heatmap
     simple_top_pos <- data.frame(Control = top_25_mg_pos$id, rank = 1:length(top_25_mg_pos$id))
@@ -303,8 +330,4 @@ main_mg <- function(x = input_files_txt, y = control_file_mg){
   
 }
 
-if (opt$format == "mg"){
-  main_mg(input_files_txt, control_file_mg)
-} #else if (opt$format == "sb"){
-#main_sb()
-#}
+main_mg(input_files_txt, control_file)
