@@ -1,4 +1,4 @@
-# ScrispR
+# ScrispR | MaGscRipt
 A software for Multiple Genetic Screens data visualization
 
 [Dependencies](#dependencies)<br/>
