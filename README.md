@@ -38,6 +38,6 @@ Mandatory arguments:<br/>
 Optional arguments:<br/>
 -c: (control file): **path** to the control file (no control as default). <br/>
 -o: (output directory): **path** to an existing folder where output files will be saved (input directory default).<br/>
--s: (sgRNA input directory): **path** to an existing folder where sgRNA summary files are saved.<br/>
+-g: (sgRNA input directory): **path** to an existing folder where sgRNA summary files are saved.<br/>
 -p: (plot format): just write one among these (png is default): png , pdf, ps, jpeg, tiff, bmp.<br/>
 
