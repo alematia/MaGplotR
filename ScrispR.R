@@ -46,7 +46,7 @@ parser <- add_option(parser,
 
 
 parser <- add_option(parser, 
-                     opt_str = c("-s", "--sgrna-inputdirectory"), 
+                     opt_str = c("-g", "--sgrna-inputdirectory"), 
                      type = "character",
                      dest = 'sgrna.input.directory',
                      help="sgRNA input directory (optional). Path to directory where sgRNA summary test files are saved."
@@ -85,15 +85,12 @@ if(is.null(opt$output.directory)){
 }
 
 
-
 # Set control file path. If no control file is loaded, pass.
 if(!is.null(opt$control.file)){control_file_path <- file.path(opt$control.file)}
 
 
-
 # Set sgRNA input directory
 if(!is.null(opt$sgrna.input.directory)){sgrna_input_dir_path = opt$sgrna.input.directory}
-
 
 
 # Select plot format
@@ -108,9 +105,7 @@ if (opt$plot.format %in% c('png', 'pdf', 'ps', 'jpeg', 'tiff', 'bmp')){
 
 
 
-
-# Read MaGeCK or ScreenBEAM files.
-
+# Read MaGeCK files
 setwd(input_dir_path)  # Set wd to read gene summary files.
 MaGeCK_files = list.files(pattern="*.txt")
 input_files_txt = lapply(MaGeCK_files, read.delim)
@@ -118,14 +113,14 @@ print("MaGeCK gene summary data detected.")
 if(is.na(opt$control.file)){ 
   control_file <- NULL
   print("No control file detected.")
-  } else {
+} else {
   control_file <- read.delim(file.path(control_file_path))
   print("Control file detected")
 }
 
 
 # Read sgRNA summary files.
-if(!is.na(sgrna_input_dir_path)){
+if(!is.null(opt$sgrna.input.directory)){
   print("MaGeCK sgRNA data detected.")
   setwd(sgrna_input_dir_path)  # Set wd to read sgRNA summary files.
   sgMaGeCK_files = list.files(pattern="*.txt")
@@ -143,24 +138,24 @@ setwd(first_dir)
 
 ## MaGeCK gene summary analysis:
 #
-# gene id and its lfc is substracted from each df.
-id_lfc_maker <- function(input_files_txt){
+# gene id and LFC is obtained from each df
+genes_shortener <- function(input_files){
   num <- 1
-  sub_input_files_txt <- c()
+  sub_input_files <- c()
   for (i in input_files_txt){
-    sub_input_files_txt[[num]] <- data.frame(i$id, i$pos.lfc)
-    colnames(sub_input_files_txt[[num]]) <- c(paste0("id", num), "LFC")
+    sub_input_files[[num]] <- data.frame(i$id, i$pos.lfc)
+    colnames(sub_input_files[[num]]) <- c(paste0("id", num), "LFC")
     num <- num + 1
   }
-  return(sub_input_files_txt)
+  return(sub_input_files)
 }
 
 
-# Melts 
-melter <- function(sub_input_files_txt){
+# Melts gene summary sub dfs
+melter <- function(sub_input_files){
   melted_sub_input_files <- c()
   num <- 1
-  for (i in sub_input_files_txt){
+  for (i in sub_input_files){
     melted_sub_input_files[[num]] <- reshape2::melt(i, id.vars = 2)
     num <- num + 1
   }
@@ -203,36 +198,36 @@ id_rank_maker_neg <- function(input_files_txt){
   return(sub_mg_rank_files)
 }
 
-
-main_mg <- function(x = input_files_txt, y = control_file){
+# gene analysis 
+gene_analysis <- function(x = input_files_txt, y = control_file){
   print("Analyzing MaGeCK gene summary data...")
-  sub_input_files_txt <- id_lfc_maker(input_files_txt)
-  melted_sub_input_files <- melter(sub_input_files_txt)
+  sub_input_files <- genes_shortener(input_files_txt)
+  melted_sub_input_files <- melter(sub_input_files)
   bound <- bind_rows(as.vector(melted_sub_input_files)) # Binds all id_lfc dfs
   #experiments_labs <- xlabs()
   
   ## 1. Boxplot with control if supplied
   if (is.null(control_file)){
-    boxplot <- ggplot(bound, aes(variable, y= LFC))+
+    boxplot <- ggplot(bound, aes(variable, y = LFC))+
       geom_boxplot(aes(colour=variable), outlier.shape = NA)+
-      geom_jitter(position = position_jitter(width = 0.25) , size=0.005, alpha = 0.05, aes(colour=variable))+
+      geom_jitter(position = position_jitter(width = 0.25) , size = 0.005, alpha = 0.05, aes(colour=variable))+
       xlab("Test experiments")+
-      ylab("Log2 Fold Change (LFC)")+
+      ylab("Genes Log2 Fold Change (LFC)")+
       theme(legend.position = "None", axis.text.x = element_text(size = 10))#+
     #scale_x_discrete(labels=experiments_labs, )
   } else {
     sub_control_mg <- data.frame(Control = control_file$id, LFC = control_file$pos.lfc)
-    melted_control_mg <- reshape2::melt(sub_control_mg, id.vars=2)
+    melted_control_mg <- reshape2::melt(sub_control_mg, id.vars = 2)
     all_data_boxplot_mg <- bind_rows(bound, melted_control_mg)
     boxplot <- ggplot(all_data_boxplot_mg, aes(variable, y= LFC))+
       geom_boxplot(aes(colour=variable), outlier.shape = NA)+
       geom_jitter(position = position_jitter(width = 0.25) , size=0.005, alpha = 0.05, aes(colour=variable))+
       xlab("Test experiments")+
-      ylab("Log2 Fold Change (LFC)")+
+      ylab("Genes Log2 Fold Change (LFC)")+
       theme(legend.position = "None", axis.text.x = element_text(size = 10))
   }
-  suppressMessages(ggsave(path = output.directory, filename = paste0("boxplot.", plot.format), plot = boxplot, device = plot.format))
-  print("Boxplot saved in output directory.")
+  suppressMessages(ggsave(path = output.directory, filename = paste0("genes_boxplot.", plot.format), plot = boxplot, device = plot.format))
+  print("Genes boxplot saved in output directory.")
   
   ## 2. Heatmaps + record csv files (pos and neg).
   sub_mg_rank_files_pos <- id_rank_maker_pos(input_files_txt)
@@ -330,4 +325,51 @@ main_mg <- function(x = input_files_txt, y = control_file){
   
 }
 
-main_mg(input_files_txt, control_file)
+
+# sgrna analysis
+sgrna_analysis <- function(sginput_files_txt){
+  
+  # Sub df with columns sgRNA, Gene and LFC.
+  sgrna_shortener <- function(sginput_files){
+    num <- 1
+    sgsub_input_files <- c()
+    for (i in sginput_files){
+      sgsub_input_files[[num]] <- data.frame(i$sgrna,i$Gene, i$LFC)
+      colnames(sgsub_input_files[[num]]) <- c("sgRNA", "Gene", "LFC")
+      num <- num + 1
+    }
+    return(sgsub_input_files)
+  }
+  
+  
+  ## Appends a column with the experiment number.
+  col_appender <- function(sgsub_input_files){
+    num <- 1
+    for (i in sgsub_input_files){
+      nrows <- nrow(i)
+      sgsub_input_files[[num]]$exp_number <- rep(c(num), times=nrows)
+      num <- num + 1   
+    }
+    return(sgsub_input_files)
+  }
+  
+  
+  # Execute functions
+  sgsub_input_files <- sgrna_shortener(sginput_files_txt)
+  sgsub_input_files_coln <- col_appender(sgsub_input_files)
+  sgbound <- bind_rows(as.vector(sgsub_input_files_coln)) # Binds all sgRNA sub dfs
+  
+  # Create boxplot for sgRNAs' LFCs
+  sgboxplot <- ggplot(sgbound, aes(x = factor(exp_number), y = LFC))+
+    geom_boxplot(aes(colour=factor(exp_number)), outlier.shape = NA)+
+    geom_jitter(position = position_jitter(width = 0.25) , size=0.005, alpha = 0.05, aes(colour=factor(exp_number)))+
+    xlab("Test experiments")+
+    ylab("sgRNA Log2 Fold Change (LFC)")+
+    theme(legend.position = "None", axis.text.x = element_text(size = 10))
+  suppressMessages(ggsave(path = output.directory, filename = paste0("sgrnas_boxplot.", plot.format), plot = sgboxplot, device = plot.format))
+  print("sgRNAs boxplot saved in output directory.")
+}
+
+
+gene_analysis(input_files_txt, control_file)
+if(!is.null(opt$sgrna.input.directory)){sgrna_analysis(sginput_files_txt)}
