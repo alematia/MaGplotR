@@ -1,8 +1,12 @@
 # ScrispR | MaG-scRipt
-A software for Multiple Genetic Screens data visualization
+#### A software for Multiple Genetic Screens data visualization
+
+[INTRODUCTION TEXT]
 
 [Dependencies](#dependencies)<br/>
 [Usage](#usage)<br/>
+
+
 
 ## Dependencies
 You can either install these packages from R terminal or by running the installation script from linux terminal.<br/>
@@ -27,9 +31,12 @@ Rscript installation_scrispr.R
 
 ### USAGE
 
-Example:
+Examples:
 ```bash
-Rscript ScripsR.R -i path_to_results_directory -c path_to_control_file -p png -o path_to_output_directory -s path_to_sgRNA_input_directory
+Rscript ScripsR.R -i path_to_results_directory
+```
+```bash
+Rscript ScripsR.R -i path_to_results_directory -c path_to_control_file -p png -o path_to_output_directory -g path_to_sgRNA_input_directory
 ```
 
 Mandatory arguments:<br/>
