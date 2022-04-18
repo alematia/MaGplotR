@@ -26,12 +26,21 @@ parser <- add_option(parser,
                      help="Input directory (required). Path to directory where gene summary test files are saved."
 )
 
+
 parser <- add_option(parser, 
                      opt_str = c("-c", "--control"), 
                      type = "character",
                      default = NA,
                      dest = 'control.file',
                      help="A file path to the control experiment (optional)."
+)
+
+
+parser <- add_option(parser, 
+                     opt_str = c("-t", "--top-cutoff"), 
+                     type = "character",
+                     dest = 'top.cutoff',
+                     help="A number for heatmap visualization (top hits). 25 is set as default."
 )
 
 
@@ -44,16 +53,12 @@ parser <- add_option(parser,
 )
 
 
-
 parser <- add_option(parser, 
                      opt_str = c("-g", "--sgrna-inputdirectory"), 
                      type = "character",
                      dest = 'sgrna.input.directory',
                      help="sgRNA input directory (optional). Path to directory where sgRNA summary test files are saved."
 )
-
-
-
 
 
 parser <- add_option(parser, 
@@ -87,6 +92,14 @@ if(is.null(opt$output.directory)){
 
 # Set control file path. If no control file is loaded, pass.
 if(!is.null(opt$control.file)){control_file_path <- file.path(opt$control.file)}
+
+
+# Set number of hits shown in heatmap. 25 is default.
+if(!is.null(opt$top.cutoff)){
+  top_cutoff <- opt$top.cutoff
+} else {
+  top_cutoff <- 25
+}
 
 
 # Set sgRNA input directory
@@ -242,9 +255,9 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   write.csv(sorted_whole_mg_pos, paste0(output.directory, "/MaGeCK_ranked_genes_pos.csv"), row.names = FALSE)
   print("Positive selection ranked genes (.csv file) saved in output directory.")
   ## Head top 25
-  top_25_mg_pos <- head(sorted_whole_mg_pos, 25)
+  top_mg_pos <- head(sorted_whole_mg_pos, as.numeric(top_cutoff))
   ## Melt df to tidy large format
-  melted_mg_pos <- melt(top_25_mg_pos,id.vars = c("id", "RankMeans"))
+  melted_mg_pos <- melt(top_mg_pos,id.vars = c("id", "RankMeans"))
   heatmap_mg_pos <- ggplot(melted_mg_pos, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
     geom_tile(colour="white", size=.2)+
     ggtitle("Gene position in rank")+
@@ -269,8 +282,8 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   sorted_whole_mg_neg <- merged_mg_neg[order(merged_mg_neg$RankMeans),]
   write.csv(sorted_whole_mg_neg, paste0(output.directory, "/MaGeCK_ranked_genes_neg.csv"), row.names = FALSE)
   print("Negative selection ranked genes (.csv file) saved in output directory.")
-  top_25_mg_neg <- head(sorted_whole_mg_neg, 25)
-  melted_mg_neg <- melt(top_25_mg_neg,id.vars = c("id", "RankMeans"))
+  top_mg_neg <- head(sorted_whole_mg_neg, as.numeric(top_cutoff))
+  melted_mg_neg <- melt(top_mg_neg,id.vars = c("id", "RankMeans"))
   heatmap_mg_neg <- ggplot(melted_mg_neg, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
     geom_tile(colour="white", size=.2)+
     ggtitle("Gene position in rank")+
@@ -291,7 +304,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     control_file <- NULL
   } else {
     ## Control LFC plot for positive heatmap
-    simple_top_pos <- data.frame(Control = top_25_mg_pos$id, rank = 1:length(top_25_mg_pos$id))
+    simple_top_pos <- data.frame(Control = top_mg_pos$id, rank = 1:length(top_mg_pos$id))
     control_merge_pos <- merge(x=simple_top_pos, y=sub_control_mg , by = "Control")
     control_merge_pos <- control_merge_pos[order(control_merge_pos$rank),]
     self_plot_pos <- ggplot(control_merge_pos, aes(x = LFC , y = reorder(Control, -rank)))+
@@ -307,7 +320,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     
     
     ## Control LFC plot for negative heatmap
-    simple_top_neg <- data.frame(Control = top_25_mg_neg$id, rank = 1:length(top_25_mg_neg$id))
+    simple_top_neg <- data.frame(Control = top_mg_neg$id, rank = 1:length(top_mg_neg$id))
     control_merge_neg <- merge(x=simple_top_neg, y=sub_control_mg , by = "Control")
     control_merge_neg <- control_merge_neg[order(control_merge_neg$rank),]
     self_plot_neg <- ggplot(control_merge_neg, aes(x = LFC , y = reorder(Control, -rank)))+
