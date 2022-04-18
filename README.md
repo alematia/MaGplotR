@@ -1,4 +1,4 @@
-# ScrispR | MaG-scRipt
+# ScrispR | MaG-scRipt beta
 #### A software for Multiple Genetic Screens data visualization
 
 *MaG-scRipt* produces visualization plots for MaGeCK screen data (RRA analysis). <br/>
