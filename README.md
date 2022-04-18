@@ -14,11 +14,13 @@ Additionally, a control experiment `gene_summary.txt` file can be used to compar
 
 
 ## Citation
-[PAPER PUBLICATION]
+If you use this software please cite:<br/>
+[PREPRINT] / [PUBLICATION]<br/>
 
 
 ## Motivation
-[Motivation: our experiments]
+This software was developed to simplify the analysis of MaGeCK screen data from multiple experiments through elegant visualization. Sometimes, several screen experiments are performed testing multiple conditions or with a number of replicates, and it is desired to perform comparisons between these experiments. We put special focus introducing the possibility to add a control experiment to observe the behaviour of the hits in this experiment in a visually quantitative way that may help discarding false positives (i.e. self enrichment of potential hits in control experiment). Two main values are extracted from MaGeCK test summary files; LFC and rank, presenting them in a way that simplifies the whole set of experiments analysis.
+Heatmap representation gives a rapid view of how top hits behave in the set of experiements, making very easy to detect if a particular hit had a poorer score in a experiment. The number of hits shown in heatmap plots can be adjusted when running the software from the command line (see options below). Also, the intermediate files to create the heatmap plots are generated and saved in the output directory so the user can check the ranking score of every gene.
 
 
 ## Dependencies
@@ -42,7 +44,7 @@ Rscript installation_scrispr.R
 
 
 
-### USAGE
+## Usage
 #### Recommendations:
 Create a directory and copy there all the gene summary files you want to analyze. This will be the input directory (-i). Optionally, do the same thing with sgRNA summary files (-g). If you have a control gene summary file to analyze (-c), we recommend to put it in the parent directory for simplicity.
 Next, open a terminal in linux and change directory where the ScrispR.R is located. Then type the commands as in the examples. Make sure you give the complete path to the file/folder as argument (you can easily do this copying the file/folder and clicking paste in the terminal). You can also provide an output folder, where files will be saved, otherwise, input directory is default. You can also choose different output formats and select top cutoff.
@@ -54,7 +56,7 @@ Rscript ScripsR.R -i path_to_results_directory
 ```bash
 Rscript ScripsR.R -i path_to_results_directory -c path_to_control_file -t 50 -p png -o path_to_output_directory -g path_to_sgRNA_input_directory
 ```
-
+### Options:
 Mandatory arguments:<br/>
 -i (input directory): **path** to the folder where gene summary files (test files) are located. All files in this folder will be taken as input.<br/>
 
@@ -65,6 +67,8 @@ Optional arguments:<br/>
 -t: (top cutoff): number of hits to be shown in heatmaps. 25 is default.<br/>
 -p: (plot format): just write one among these (png is default): png , pdf, ps, jpeg, tiff, bmp.<br/>
 
+
+## Output plots and files
 Boxplot
 ![boxplot](https://user-images.githubusercontent.com/95416488/163806423-9b7c4135-6b66-4fa7-a0a9-79252b1815ac.png)
 
