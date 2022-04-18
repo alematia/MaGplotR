@@ -52,7 +52,7 @@ Examples:
 Rscript ScripsR.R -i path_to_results_directory
 ```
 ```bash
-Rscript ScripsR.R -i path_to_results_directory -c path_to_control_file -p png -o path_to_output_directory -g path_to_sgRNA_input_directory
+Rscript ScripsR.R -i path_to_results_directory -c path_to_control_file -t 50 -p png -o path_to_output_directory -g path_to_sgRNA_input_directory
 ```
 
 Mandatory arguments:<br/>
@@ -62,7 +62,7 @@ Optional arguments:<br/>
 -c: (control file): **path** to the control file (no control as default). <br/>
 -o: (output directory): **path** to an existing folder where output files will be saved (input directory default).<br/>
 -g: (sgRNA input directory): **path** to an existing folder where sgRNA summary files are saved.<br/>
--t: (top cutoff): **soon implementation**<br/>
+-t: (top cutoff): number of hits to be shown in heatmaps. 25 is default.<br/>
 -p: (plot format): just write one among these (png is default): png , pdf, ps, jpeg, tiff, bmp.<br/>
 
 Boxplot
