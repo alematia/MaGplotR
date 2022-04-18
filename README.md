@@ -65,3 +65,10 @@ Optional arguments:<br/>
 -t: (top cutoff): **soon implementation**<br/>
 -p: (plot format): just write one among these (png is default): png , pdf, ps, jpeg, tiff, bmp.<br/>
 
+Boxplot
+![boxplot](https://user-images.githubusercontent.com/95416488/163806423-9b7c4135-6b66-4fa7-a0a9-79252b1815ac.png)
+
+Heatmap with control
+![Screenshot from 2022-04-18 14-13-21](https://user-images.githubusercontent.com/95416488/163806699-6b610768-d8ac-4e7d-b2d1-66301e64875d.png)
+
+
