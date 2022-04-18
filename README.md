@@ -45,7 +45,7 @@ Rscript installation_scrispr.R
 ### USAGE
 #### Recommendations:
 Create a directory and copy there all the gene summary files you want to analyze. This will be the input directory (-i). Optionally, do the same thing with sgRNA summary files (-g). If you have a control gene summary file to analyze (-c), we recommend to put it in the parent directory for simplicity.
-Next, open a terminal in linux and change directory where the ScrispR.R is located. Then type the commands as in the examples. Make sure you give the complete path to the file/folder as argument (you can easily do this copying the file/folder and clicking paste in the terminal). You can also provide an output folder, where files will be saved, otherwise, parent directory is default. You can also choose different output formats and select top cutoff.
+Next, open a terminal in linux and change directory where the ScrispR.R is located. Then type the commands as in the examples. Make sure you give the complete path to the file/folder as argument (you can easily do this copying the file/folder and clicking paste in the terminal). You can also provide an output folder, where files will be saved, otherwise, input directory is default. You can also choose different output formats and select top cutoff.
 
 Examples:
 ```bash
