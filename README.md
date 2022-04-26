@@ -69,10 +69,10 @@ Optional arguments:<br/>
 
 
 ## Output plots and files
-Boxplot
+Boxplot<br/>
 ![Screenshot from 2022-04-26 11-57-20](https://user-images.githubusercontent.com/95416488/165274882-804becbc-c209-4eef-ae05-66c687627aaa.png)
 
-Heatmap with control
+Heatmap with control<br/>
 ![Screenshot from 2022-04-26 13-23-09](https://user-images.githubusercontent.com/95416488/165289439-00257b97-2d49-46b6-98ee-7abbd350aaa4.png)
 
 
