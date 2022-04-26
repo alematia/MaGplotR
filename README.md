@@ -1,4 +1,4 @@
-# MaGplotR 0.1
+# MaGplotR v0.1
 #### A software for Multiple Genetic Screens data visualization
 
 *MaGplotR* produces visualization plots for MaGeCK screen data (RRA analysis). <br/>
