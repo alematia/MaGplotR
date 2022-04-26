@@ -1,5 +1,5 @@
 #!/usr/bin/env R
-## Installation script for ScrispR
+## Installation script for MaGplotR
 
 if (!("optparse" %in% installed.packages())) { 
   install.packages("optparse");
