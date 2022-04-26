@@ -1,6 +1,6 @@
 #!/usr/bin/env R
 
-## Welcome to ScrispR
+## Welcome to MaGplotR
 
 options(warn=-1)
 
@@ -157,7 +157,7 @@ genes_shortener <- function(input_files){
   sub_input_files <- c()
   for (i in input_files_txt){
     sub_input_files[[num]] <- data.frame(i$id, i$pos.lfc)
-    colnames(sub_input_files[[num]]) <- c(paste0("id", num), "LFC")
+    colnames(sub_input_files[[num]]) <- c(gsub(".gene_summary.txt", "", MaGeCK_files[num]), "LFC")
     num <- num + 1
   }
   return(sub_input_files)
@@ -193,7 +193,7 @@ id_rank_maker_pos <- function(input_files_txt){
   sub_mg_rank_files <- c()
   for (i in input_files_txt){
     sub_mg_rank_files[[num]] <- data.frame(i$id, i$pos.rank)
-    colnames(sub_mg_rank_files[[num]]) <- c("id", paste0("Rank", num))
+    colnames(sub_mg_rank_files[[num]]) <- c("id", gsub(".gene_summary.txt", " ", MaGeCK_files[num]))
     num <- num + 1
   }
   return(sub_mg_rank_files)
@@ -205,7 +205,7 @@ id_rank_maker_neg <- function(input_files_txt){
   sub_mg_rank_files <- c()
   for (i in input_files_txt){
     sub_mg_rank_files[[num]] <- data.frame(i$id, i$neg.rank)
-    colnames(sub_mg_rank_files[[num]]) <- c("id", paste0("Rank", num))
+    colnames(sub_mg_rank_files[[num]]) <- c("id", gsub(".gene_summary.txt", " ", MaGeCK_files[num]))
     num <- num + 1
   }
   return(sub_mg_rank_files)
@@ -248,7 +248,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   merged_mg_pos <- sub_mg_rank_files_pos %>% reduce(inner_join, by = "id")
   ## Add the mean of all exp ranks to each gene as a new column.
   rank_data_mg_pos <- merged_mg_pos %>% 
-    select(matches("Rank"))
+    select(matches(" "))
   merged_mg_pos$RankMeans <- rowMeans(rank_data_mg_pos)
   ## Generate csv file with rank records.
   sorted_whole_mg_pos <- merged_mg_pos[order(merged_mg_pos$RankMeans),]
@@ -260,7 +260,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   melted_mg_pos <- melt(top_mg_pos,id.vars = c("id", "RankMeans"))
   heatmap_mg_pos <- ggplot(melted_mg_pos, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
     geom_tile(colour="white", size=.2)+
-    ggtitle("Gene position in rank")+
+    ggtitle("Gene position in positive rank")+
     theme(panel.background = element_blank(),
           legend.position = "left",
           axis.text.x = element_text(angle = 45, hjust = 1),
@@ -277,7 +277,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   sub_mg_rank_files_neg <- id_rank_maker_neg(input_files_txt)
   merged_mg_neg <- sub_mg_rank_files_neg %>% reduce(inner_join, by = "id")
   rank_data_mg_neg <- merged_mg_neg %>% 
-    select(matches("Rank"))
+    select(matches(" "))
   merged_mg_neg$RankMeans <- rowMeans(rank_data_mg_neg)
   sorted_whole_mg_neg <- merged_mg_neg[order(merged_mg_neg$RankMeans),]
   write.csv(sorted_whole_mg_neg, paste0(output.directory, "/MaGeCK_ranked_genes_neg.csv"), row.names = FALSE)
@@ -286,7 +286,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   melted_mg_neg <- melt(top_mg_neg,id.vars = c("id", "RankMeans"))
   heatmap_mg_neg <- ggplot(melted_mg_neg, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
     geom_tile(colour="white", size=.2)+
-    ggtitle("Gene position in rank")+
+    ggtitle("Gene position in negative rank")+
     theme(panel.background = element_blank(),
           legend.position = "left",
           axis.text.x = element_text(angle = 45, hjust = 1),
