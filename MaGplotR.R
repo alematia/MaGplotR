@@ -340,6 +340,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
             panel.grid.major.x = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
             axis.line.x = element_blank(), axis.line.y = element_blank(), axis.text.x= element_text(),
             axis.ticks.x = element_line(), axis.ticks.y = element_blank(), axis.title.y = element_blank())+
+      xlab("LFC")+
       geom_vline(xintercept=0, linetype="dashed", color = "red")
     suppressMessages(ggsave(path = output.directory, filename = paste0("self_enrichment_pos.", plot.format), plot = self_plot_pos, device = plot.format))
     print("Self enrichment plot (positive selection) saved in output directory.")
@@ -358,6 +359,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
             panel.grid.major.x = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
             axis.line.x = element_blank(), axis.line.y = element_blank(), axis.text.x= element_text(),
             axis.ticks.x = element_line(), axis.ticks.y = element_blank(), axis.title.y = element_blank())+
+      xlab("LFC")+
       geom_vline(xintercept=0, linetype="dashed", color = "red")
     suppressMessages(ggsave(path = output.directory, filename = paste0("self_enrichment_neg.", plot.format), plot = self_plot_neg, device = plot.format))
     print("Self enrichment plot (negative selection) saved in output directory.")
