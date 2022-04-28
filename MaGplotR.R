@@ -211,6 +211,18 @@ id_rank_maker_neg <- function(input_files_txt){
   return(sub_mg_rank_files)
 }
 
+
+id_LFC_maker <- function(input_files_txt){
+  num <- 1
+  sub_mg_LFC_files <- c()
+  for (i in input_files_txt){
+    sub_mg_LFC_files[[num]] <- data.frame(i$id, i$pos.lfc)
+    colnames(sub_mg_LFC_files[[num]]) <- c("id", gsub(".gene_summary.txt", " ", MaGeCK_files[num]))
+    num <- num + 1
+  }
+  return(sub_mg_LFC_files)
+}
+
 # gene analysis 
 gene_analysis <- function(x = input_files_txt, y = control_file){
   print("Analyzing MaGeCK gene summary data...")
@@ -229,8 +241,9 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
       theme(legend.position = "None", axis.text.x = element_text(size = 10))#+
     #scale_x_discrete(labels=experiments_labs, )
   } else {
-    sub_control_mg <- data.frame(Control = control_file$id, LFC = control_file$pos.lfc)
-    melted_control_mg <- reshape2::melt(sub_control_mg, id.vars = 2)
+    sub_control_mg <- data.frame(id = control_file$id, LFC = control_file$pos.lfc)
+    sub_control_mg2 <- data.frame(Control = control_file$id, LFC = control_file$pos.lfc)
+    melted_control_mg <- reshape2::melt(sub_control_mg2, id.vars = 2)
     all_data_boxplot_mg <- bind_rows(bound, melted_control_mg)
     boxplot <- ggplot(all_data_boxplot_mg, aes(variable, y= LFC))+
       geom_boxplot(aes(colour=variable), outlier.shape = NA)+
@@ -303,13 +316,26 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   if(is.null(control_file)){
     control_file <- NULL
   } else {
+    # Obtain LFC mean for every gene in all experiments:
+    sub_mg_LFC_files <- id_LFC_maker(input_files_txt)
+    ## Merge all data frames according to the gene id:
+    merged_mg_LFC <- sub_mg_LFC_files %>% reduce(inner_join, by = "id")
+    ## Add the mean of all exp LFCs to each gene as a new column.
+    LFC_data_mg <- merged_mg_LFC %>% 
+      select(matches(" "))
+    merged_mg_LFC$LFCMeans <- rowMeans(LFC_data_mg)
+    all_LFC <- data.frame(id = merged_mg_LFC$id, expLFCMeans = merged_mg_LFC$LFCMeans)
+    
     ## Control LFC plot for positive heatmap
-    simple_top_pos <- data.frame(Control = top_mg_pos$id, rank = 1:length(top_mg_pos$id))
-    control_merge_pos <- merge(x=simple_top_pos, y=sub_control_mg , by = "Control")
+    simple_top_pos <- data.frame(id = top_mg_pos$id, rank = 1:length(top_mg_pos$id))
+    control_merge_pos <- merge(x=simple_top_pos, y=sub_control_mg , by = "id")
+    control_merge_pos <- merge(x=control_merge_pos, y=all_LFC , by = "id")
     control_merge_pos <- control_merge_pos[order(control_merge_pos$rank),]
-    self_plot_pos <- ggplot(control_merge_pos, aes(x = LFC , y = reorder(Control, -rank)))+
-      geom_point(size=1.5)+
-      xlim(floor(min(control_merge_pos$LFC)), max(control_merge_pos$LFC))+
+    trial_plot_pos <- control_merge_pos %>% pivot_longer(cols = c(LFC, expLFCMeans), names_to = "lfcs")  #pivot plot
+    self_plot_pos <- ggplot(trial_plot_pos, aes(x = value, y = reorder(id, -rank), col = lfcs, group = lfcs))+
+      geom_point(size=1.75)+
+      scale_color_manual(values = c("coral2", "lightseagreen"))+
+      xlim(floor(min(trial_plot_pos$value)), max(trial_plot_pos$value))+
       theme(text = element_text(size=12), legend.position = "none", panel.grid.major.y = element_line(colour="black"), 
             panel.grid.major.x = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
             axis.line.x = element_blank(), axis.line.y = element_blank(), axis.text.x= element_text(),
@@ -318,14 +344,16 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     suppressMessages(ggsave(path = output.directory, filename = paste0("self_enrichment_pos.", plot.format), plot = self_plot_pos, device = plot.format))
     print("Self enrichment plot (positive selection) saved in output directory.")
     
-    
     ## Control LFC plot for negative heatmap
-    simple_top_neg <- data.frame(Control = top_mg_neg$id, rank = 1:length(top_mg_neg$id))
-    control_merge_neg <- merge(x=simple_top_neg, y=sub_control_mg , by = "Control")
+    simple_top_neg <- data.frame(id = top_mg_neg$id, rank = 1:length(top_mg_neg$id))
+    control_merge_neg <- merge(x=simple_top_neg, y=sub_control_mg , by = "id")
+    control_merge_neg <- merge(x=control_merge_neg, y=all_LFC , by = "id")
     control_merge_neg <- control_merge_neg[order(control_merge_neg$rank),]
-    self_plot_neg <- ggplot(control_merge_neg, aes(x = LFC , y = reorder(Control, -rank)))+
-      geom_point(size=1.5)+
-      xlim(floor(min(control_merge_neg$LFC)), max(control_merge_neg$LFC))+
+    trial_plot_neg <- control_merge_neg %>% pivot_longer(cols = c(LFC, expLFCMeans), names_to = "lfcs")  #pivot plot
+    self_plot_neg <- ggplot(trial_plot_neg, aes(x = value, y = reorder(id, -rank), col = lfcs, group = lfcs))+
+      geom_point(size=1.75)+
+      scale_color_manual(values = c("coral2", "lightseagreen"))+
+      xlim(floor(min(trial_plot_neg$value)), max(trial_plot_neg$value))+
       theme(text = element_text(size=12), legend.position = "none", panel.grid.major.y = element_line(colour="black"), 
             panel.grid.major.x = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
             axis.line.x = element_blank(), axis.line.y = element_blank(), axis.text.x= element_text(),
@@ -334,8 +362,6 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     suppressMessages(ggsave(path = output.directory, filename = paste0("self_enrichment_neg.", plot.format), plot = self_plot_neg, device = plot.format))
     print("Self enrichment plot (negative selection) saved in output directory.")
   }
-  
-  
 }
 
 
