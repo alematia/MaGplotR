@@ -71,7 +71,7 @@ Optional arguments:<br/>
 
 ## Output plots and files
 Boxplot<br/>
-![Screenshot from 2022-04-26 11-57-20](https://user-images.githubusercontent.com/95416488/165274882-804becbc-c209-4eef-ae05-66c687627aaa.png)
+![genes_boxplot](https://user-images.githubusercontent.com/95416488/165910220-adba030f-6b99-4869-b38f-47dfbc09ced1.png)
 
 Heatmap with control<br/>
 Heatmap represents gene ranks in each experiment. Control plot shows the LFC of control (cyan) and the mean LFC of all experiments (red) for each gene.<br/>
