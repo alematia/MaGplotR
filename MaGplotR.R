@@ -238,7 +238,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
       geom_jitter(position = position_jitter(width = 0.25) , size = 0.005, alpha = 0.05, aes(colour=variable))+
       xlab("Test experiments")+
       ylab("Genes Log2 Fold Change (LFC)")+
-      theme(legend.position = "None", axis.text.x = element_text(size = 10))#+
+      theme(legend.position = "None", axis.text.x = element_text(size = 10, angle = 45, hjust = 1))#+
     #scale_x_discrete(labels=experiments_labs, )
   } else {
     sub_control_mg <- data.frame(id = control_file$id, LFC = control_file$pos.lfc)
@@ -250,7 +250,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
       geom_jitter(position = position_jitter(width = 0.25) , size=0.005, alpha = 0.05, aes(colour=variable))+
       xlab("Test experiments")+
       ylab("Genes Log2 Fold Change (LFC)")+
-      theme(legend.position = "None", axis.text.x = element_text(size = 10))
+      theme(legend.position = "None", axis.text.x = element_text(size = 10, angle = 45, hjust = 1))
   }
   suppressMessages(ggsave(path = output.directory, filename = paste0("genes_boxplot.", plot.format), plot = boxplot, device = plot.format))
   print("Genes boxplot saved in output directory.")
