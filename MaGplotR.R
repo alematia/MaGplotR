@@ -12,6 +12,7 @@ suppressPackageStartupMessages(library(reshape2))
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(stringr))
 suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(ReactomePA))
 
 
 # option parsing #
@@ -364,6 +365,19 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     suppressMessages(ggsave(path = output.directory, filename = paste0("self_enrichment_neg.", plot.format), plot = self_plot_neg, device = plot.format))
     print("Self enrichment plot (negative selection) saved in output directory.")
   }
+  
+  ## GO ANALYSIS
+  suppressPackageStartupMessages(library(org.Hs.eg.db))
+  perc_num_pos <- nrow(melted_mg_pos)*0.01
+  pre_go_pos <- head(melted_mg_pos, perc_num_pos)
+  go_genes_pos <- pre_go_pos$id
+  suppressMessages(go_pos <- select(org.Hs.eg.db,
+              keys = go_genes_pos,
+              columns=c("ENTREZID", "SYMBOL"),
+              keytype="SYMBOL"))
+  pathways_pos <- enrichPathway(as.data.frame(go_pos)$ENTREZID)
+  suppressMessages(ggsave(path = output.directory, filename = paste0("go_pos.", plot.format), plot = dotplot(pathways_pos), device = plot.format))
+  print("GO Analysis completed")
 }
 
 
