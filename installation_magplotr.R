@@ -32,3 +32,9 @@ if (!("tidyverse" %in% installed.packages())) {
 if (!("tidyverse" %in% installed.packages())) { 
   install.packages("tidyverse");
 }
+
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+BiocManager::install("org.Hs.eg.db")
+BiocManager::install("ReactomePA")
