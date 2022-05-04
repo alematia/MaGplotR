@@ -5,6 +5,7 @@
 options(warn=-1)
 
 ## Load libraries
+print("Loading libraries...")
 suppressPackageStartupMessages(library(optparse))
 suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(tidyr))
@@ -366,18 +367,66 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     print("Self enrichment plot (negative selection) saved in output directory.")
   }
   
-  ## GO ANALYSIS
-  suppressPackageStartupMessages(library(org.Hs.eg.db))
-  perc_num_pos <- nrow(melted_mg_pos)*0.01
-  pre_go_pos <- head(melted_mg_pos, perc_num_pos)
+  ## REACTOME PATHWAY ANALYSIS
+  suppressPackageStartupMessages(library(org.Hs.eg.db)) # Library is loaded here to avoid overlapping function errors
+  
+  perc_num_pos <- round(nrow(sorted_whole_mg_pos)*0.01)  # Obtain the top 1 %.
+  pre_go_pos <- head(sorted_whole_mg_pos, perc_num_pos)
   go_genes_pos <- pre_go_pos$id
   suppressMessages(go_pos <- select(org.Hs.eg.db,
               keys = go_genes_pos,
               columns=c("ENTREZID", "SYMBOL"),
               keytype="SYMBOL"))
+  go_pos <- na.omit(go_pos)
   pathways_pos <- enrichPathway(as.data.frame(go_pos)$ENTREZID)
-  suppressMessages(ggsave(path = output.directory, filename = paste0("go_pos.", plot.format), plot = dotplot(pathways_pos), device = plot.format))
-  print("GO Analysis completed")
+  pathways_pos@result$Description <- gsub("Homo sapiens\r: ", "", as.character(pathways_pos@result$Description))
+  pathways_pos@result <- pathways_pos@result[order(-pathways_pos@result$Count),]
+  write.csv(pathways_pos@result, paste0(output.directory, "/ReactomePA_pos.csv"), row.names = FALSE)
+  pathways_pos_plot <- ggplot(head(pathways_pos@result,10), aes(x = Count, y = reorder(Description, Count)))+
+    geom_point(aes(size=Count, colour=p.adjust))+
+    scale_size(range = c(4,12))+
+    theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
+          axis.line.x = element_line(color="black"))+
+    scale_color_gradient(low = "springgreen4", high = "chocolate1")+
+    xlim(min(head(pathways_pos@result$Count, 10)), max(head(pathways_pos@result$Count, 10)))
+  suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("ReactomePA_pos.", plot.format), plot = pathways_pos_plot, device = plot.format))
+  
+  perc_num_neg <- round(nrow(sorted_whole_mg_neg)*0.01)  # Obtain the top 1 %.
+  pre_go_neg <- head(sorted_whole_mg_neg, perc_num_neg)
+  go_genes_neg <- pre_go_neg$id
+  suppressMessages(go_neg <- select(org.Hs.eg.db,
+                                    keys = go_genes_neg,
+                                    columns=c("ENTREZID", "SYMBOL"),
+                                    keytype="SYMBOL"))
+  go_neg <- na.omit(go_neg)
+  pathways_neg <- enrichPathway(as.data.frame(go_neg)$ENTREZID)
+  pathways_neg@result$Description <- gsub("Homo sapiens\r: ", "", as.character(pathways_neg@result$Description))
+  pathways_neg@result <- pathways_neg@result[order(-pathways_neg@result$Count),]
+  write.csv(pathways_neg@result, paste0(output.directory, "/ReactomePA_neg.csv"), row.names = FALSE)
+  pathways_neg_plot <- ggplot(head(pathways_neg@result,10), aes(x = Count, y = reorder(Description, Count)))+
+    geom_point(aes(size=Count, colour=p.adjust))+
+    scale_size(range = c(4,12))+
+    theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
+          axis.line.x = element_line(color="black"))+
+    scale_color_gradient(low = "springgreen4", high = "chocolate1")+
+    xlim(min(head(pathways_neg@result$Count, 10)), max(head(pathways_neg@result$Count, 10)))
+  suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("ReactomePA_neg.", plot.format), plot = pathways_neg_plot, device = plot.format))
+  
+  #suppressMessages(ggsave(path = output.directory, filename = paste0("go_pos.", plot.format), plot = dotplot(pathways_pos), device = plot.format))
+  detach("package:org.Hs.eg.db", unload=TRUE)
+  print("Reactome Pathway Analysis completed")
+  
+  # GO ENRICHMENT ANALYSIS 
+  suppressMessages(library(clusterProfiler))
+  go_bp_pos <- enrichGO(as.data.frame(go_pos)$ENTREZID, 'org.Hs.eg.db', ont="BP", pvalueCutoff=0.01)
+  go_bp_pos_plot <- ggplot(head(go_bp_pos@result,10), aes(x = Count, y = reorder(Description, Count)))+
+    geom_point(aes(size=Count, colour=p.adjust))+
+    scale_size(range = c(4,12)) +
+    theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
+          axis.line.x = element_line(color="black"))+
+    scale_color_gradient(low = "springgreen4", high = "chocolate1")+
+    xlim(min(go_bp_pos@result$Count), max(go_bp_pos@result$Count))
+  suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("GO_BP_pos.", plot.format), plot = go_bp_pos_plot, device = plot.format))
 }
 
 
