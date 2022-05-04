@@ -38,3 +38,4 @@ if (!require("BiocManager", quietly = TRUE))
 
 BiocManager::install("org.Hs.eg.db")
 BiocManager::install("ReactomePA")
+BiocManager::install("clusterProfiler")
