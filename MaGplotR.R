@@ -5,13 +5,22 @@
 options(warn=-1)
 
 ## Load libraries
-print("Loading libraries...")
+suppressPackageStartupMessages(library(stringr))
+print(str_glue(""))
+print(str_glue("            ***Welcome to MaGplotR***"))
+print(str_glue(""))
+print(str_glue("O       o O       o O       o O       o O       o"))
+print(str_glue("| O   o | | O   o | | O   o | | O   o | | O   o |"))
+print(str_glue("| | O | | | | O | | | | O | | | | O | | | | O | |"))
+print(str_glue("| o   O | | o   O | | o   O | | o   O | | o   O |"))
+print(str_glue("o       O o       O o       O o       O o       O"))
+print(str_glue(""))
+print(str_glue("- Loading libraries..."))
 suppressPackageStartupMessages(library(optparse))
 suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(tidyr))
 suppressPackageStartupMessages(library(reshape2))
 suppressPackageStartupMessages(library(dplyr))
-suppressPackageStartupMessages(library(stringr))
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(ReactomePA))
 
@@ -124,19 +133,19 @@ if (opt$plot.format %in% c('png', 'pdf', 'ps', 'jpeg', 'tiff', 'bmp')){
 setwd(input_dir_path)  # Set wd to read gene summary files.
 MaGeCK_files = list.files(pattern="*.txt")
 input_files_txt = lapply(MaGeCK_files, read.delim)
-print("MaGeCK gene summary data detected.")
+print(str_glue("- MaGeCK gene summary data detected."))
 if(is.na(opt$control.file)){ 
   control_file <- NULL
-  print("No control file detected.")
+  print(str_glue("- No control file detected."))
 } else {
   control_file <- read.delim(file.path(control_file_path))
-  print("Control file detected")
+  print(str_glue("- Control file detected."))
 }
 
 
 # Read sgRNA summary files.
 if(!is.null(opt$sgrna.input.directory)){
-  print("MaGeCK sgRNA data detected.")
+  print(str_glue("- MaGeCK sgRNA data detected."))
   setwd(sgrna_input_dir_path)  # Set wd to read sgRNA summary files.
   sgMaGeCK_files = list.files(pattern="*.txt")
   sginput_files_txt = lapply(sgMaGeCK_files, read.delim)
@@ -227,7 +236,7 @@ id_LFC_maker <- function(input_files_txt){
 
 # gene analysis 
 gene_analysis <- function(x = input_files_txt, y = control_file){
-  print("Analyzing MaGeCK gene summary data...")
+  print(str_glue("- Analyzing MaGeCK gene summary data..."))
   sub_input_files <- genes_shortener(input_files_txt)
   melted_sub_input_files <- melter(sub_input_files)
   bound <- bind_rows(as.vector(melted_sub_input_files)) # Binds all id_lfc dfs
@@ -255,7 +264,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
       theme(legend.position = "None", axis.text.x = element_text(size = 10, angle = 45, hjust = 1))
   }
   suppressMessages(ggsave(path = output.directory, filename = paste0("genes_boxplot.", plot.format), plot = boxplot, device = plot.format))
-  print("Genes boxplot saved in output directory.")
+  print(str_glue("- Genes boxplot saved in output directory."))
   
   ## 2. Heatmaps + record csv files (pos and neg).
   sub_mg_rank_files_pos <- id_rank_maker_pos(input_files_txt)
@@ -268,7 +277,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   ## Generate csv file with rank records.
   sorted_whole_mg_pos <- merged_mg_pos[order(merged_mg_pos$RankMeans),]
   write.csv(sorted_whole_mg_pos, paste0(output.directory, "/MaGeCK_ranked_genes_pos.csv"), row.names = FALSE)
-  print("Positive selection ranked genes (.csv file) saved in output directory.")
+  print(str_glue("- Positive selection ranked genes (.csv file) saved in output directory."))
   ## Head top 25
   top_mg_pos <- head(sorted_whole_mg_pos, as.numeric(top_cutoff))
   ## Melt df to tidy large format
@@ -286,7 +295,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
                          breaks=seq(min(melted_mg_pos$value), max(melted_mg_pos$value),
                                     by=(max(melted_mg_pos$value)-min(melted_mg_pos$value))))  # Legend scale from highest to lowest position in rank
   suppressMessages(ggsave(path = output.directory, filename = paste0("heatmap_mageck_pos.", plot.format), plot = heatmap_mg_pos, device = plot.format))
-  print("Heatmap (positive selection) saved in output directory.")
+  print(str_glue("- Heatmap (positive selection) saved in output directory."))
   
   ## Same with negative ranks
   sub_mg_rank_files_neg <- id_rank_maker_neg(input_files_txt)
@@ -296,7 +305,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   merged_mg_neg$RankMeans <- rowMeans(rank_data_mg_neg)
   sorted_whole_mg_neg <- merged_mg_neg[order(merged_mg_neg$RankMeans),]
   write.csv(sorted_whole_mg_neg, paste0(output.directory, "/MaGeCK_ranked_genes_neg.csv"), row.names = FALSE)
-  print("Negative selection ranked genes (.csv file) saved in output directory.")
+  print(str_glue("- Negative selection ranked genes (.csv file) saved in output directory."))
   top_mg_neg <- head(sorted_whole_mg_neg, as.numeric(top_cutoff))
   melted_mg_neg <- melt(top_mg_neg,id.vars = c("id", "RankMeans"))
   heatmap_mg_neg <- ggplot(melted_mg_neg, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
@@ -312,7 +321,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
                          breaks=seq(min(melted_mg_neg$value), max(melted_mg_neg$value),
                                     by=(max(melted_mg_neg$value)-min(melted_mg_neg$value))))  # Legend scale from highest to lowest position in rank
   suppressMessages(ggsave(path = output.directory, filename = paste0("heatmap_mageck_neg.", plot.format), plot = heatmap_mg_neg, device = plot.format))
-  print("Heatmap (negative selection) saved in output directory.")
+  print(str_glue("- Heatmap (negative selection) saved in output directory."))
   
   ## Control plots for heatmaps if control file is given
   if(is.null(control_file)){
@@ -345,7 +354,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
       xlab("LFC")+
       geom_vline(xintercept=0, linetype="dashed", color = "red")
     suppressMessages(ggsave(path = output.directory, filename = paste0("self_enrichment_pos.", plot.format), plot = self_plot_pos, device = plot.format))
-    print("Self enrichment plot (positive selection) saved in output directory.")
+    print(str_glue("- Self enrichment plot (positive selection) saved in output directory."))
     
     ## Control LFC plot for negative heatmap
     simple_top_neg <- data.frame(id = top_mg_neg$id, rank = 1:length(top_mg_neg$id))
@@ -364,7 +373,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
       xlab("LFC")+
       geom_vline(xintercept=0, linetype="dashed", color = "red")
     suppressMessages(ggsave(path = output.directory, filename = paste0("self_enrichment_neg.", plot.format), plot = self_plot_neg, device = plot.format))
-    print("Self enrichment plot (negative selection) saved in output directory.")
+    print(str_glue("- Self enrichment plot (negative selection) saved in output directory."))
   }
   
   ## REACTOME PATHWAY ANALYSIS
@@ -390,6 +399,18 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     scale_color_gradient(low = "springgreen4", high = "chocolate1")+
     xlim(min(head(pathways_pos@result$Count, 10)), max(head(pathways_pos@result$Count, 10)))
   suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("ReactomePA_pos.", plot.format), plot = pathways_pos_plot, device = plot.format))
+  # Print most enriched pathway and genes.
+  ids_vector <- str_split(pathways_pos@result[pathways_pos@result[1,1], "geneID"], "/")[[1]]
+  suppressMessages(symb_id <- select(org.Hs.eg.db,
+                    keys = ids_vector,
+                    columns=c("ENTREZID", "SYMBOL"),
+                    keytype="ENTREZID"))
+  names_vector <- symb_id$SYMBOL
+  names_str <- paste(names_vector, collapse = ", ")
+  print(str_glue(
+    "- Most enriched pathway is: '", pathways_pos@result[pathways_pos@result[1,1], "Description"], "' with genes: ", names_str, ".")
+  )
+  
   
   perc_num_neg <- round(nrow(sorted_whole_mg_neg)*0.01)  # Obtain the top 1 %.
   pre_go_neg <- head(sorted_whole_mg_neg, perc_num_neg)
@@ -414,7 +435,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   
   #suppressMessages(ggsave(path = output.directory, filename = paste0("go_pos.", plot.format), plot = dotplot(pathways_pos), device = plot.format))
   detach("package:org.Hs.eg.db", unload=TRUE)
-  print("Reactome Pathway Analysis completed")
+  print(str_glue("- Reactome Pathway Analysis completed."))
   
   # GO ENRICHMENT ANALYSIS 
   suppressMessages(library(clusterProfiler))
@@ -471,7 +492,7 @@ sgrna_analysis <- function(sginput_files_txt){
     ylab("sgRNA Log2 Fold Change (LFC)")+
     theme(legend.position = "None", axis.text.x = element_text(size = 10))
   suppressMessages(ggsave(path = output.directory, filename = paste0("sgrnas_boxplot.", plot.format), plot = sgboxplot, device = plot.format))
-  print("sgRNAs boxplot saved in output directory.")
+  print(str_glue("- sgRNAs boxplot saved in output directory."))
 }
 
 
