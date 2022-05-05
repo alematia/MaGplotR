@@ -20,7 +20,8 @@ If you use this software please cite:<br/>
 
 ## Motivation
 This software was developed to simplify the analysis of MaGeCK screen data from multiple experiments through elegant visualization. Sometimes, several screen experiments are performed testing multiple conditions or with a number of replicates, and it is desired to perform comparisons between these experiments. We put special focus introducing the possibility to add a control experiment to observe the behaviour of the hits in this experiment in a visually quantitative way that may help discarding false positives (i.e. self enrichment of potential hits in control experiment). Two main values are extracted from MaGeCK test summary files; LFC and rank, presenting them in a way that simplifies the whole set of experiments analysis.
-Heatmap representation gives a rapid view of how top hits behave in the set of experiements, making very easy to detect if a particular hit had a poorer score in a experiment. The number of hits shown in heatmap plots can be adjusted when running the software from the command line (see options below). Also, the intermediate files to create the heatmap plots are generated and saved in the output directory so the user can check the ranking score of every gene.
+Heatmap representation gives a rapid view of how top hits behave in the set of experiements, making very easy to detect if a particular hit had a poorer score in a experiment. The number of hits shown in heatmap plots can be adjusted when running the software from the command line (see options below). Also, the intermediate files to create the heatmap plots are generated and saved in the output directory so the user can check the ranking score of every gene.<br/>
+As extra features, the top 1 % of positive and negative hits are analyzed with Reactome Pathway Analysis, generating plots for the most enriched pathways.
 
 
 ## Dependencies
@@ -35,6 +36,10 @@ install.packages("reshape2")
 install.packages("dplyr")
 install.packages("stringr")
 install.packages("tidyverse")
+install.packages("BiocManager")
+BiocManager::install("org.Hs.eg.db")
+BiocManager::install("ReactomePA")
+BiocManager::install("clusterProfiler")
 ```
 - Install using installation script:<br/>
 Download `installation_magplotr.R` and run the following command in Linux terminal:
@@ -81,5 +86,8 @@ Heatmap represents gene ranks in each experiment. Control plot shows the LFC of 
 #### Reactome Pathway Analysis<br/>
 Reactome PA of top 1 % hits<br/>
 ![Screenshot from 2022-05-04 15-23-43](https://user-images.githubusercontent.com/95416488/166690308-e08bb1cd-734a-43e0-9278-154074f44b03.png)
+
+#### Example of terminal display:<br/>
+![Screenshot from 2022-05-05 13-31-27](https://user-images.githubusercontent.com/95416488/166914813-94a22e29-9586-4932-94ca-41cf78f010be.png)
 
 
