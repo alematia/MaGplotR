@@ -65,7 +65,7 @@ parser <- add_option(parser,
 
 
 parser <- add_option(parser, 
-                     opt_str = c("-g", "--sgrna-inputdirectory"), 
+                     opt_str = c("-r", "--sgrna-inputdirectory"), 
                      type = "character",
                      dest = 'sgrna.input.directory',
                      help="sgRNA input directory (optional). Path to directory where sgRNA summary test files are saved."
@@ -81,7 +81,13 @@ parser <- add_option(parser,
 )
 
 
-
+parser <- add_option(parser, 
+                     opt_str = c("-g", "--ontology"), 
+                     type = "character",
+                     default = 'BP',
+                     dest = 'gene.ontology',
+                     help="A string: BP, MF, CC."
+)
 
 opt = parse_args(parser)
 
@@ -126,6 +132,12 @@ if (opt$plot.format %in% c('png', 'pdf', 'ps', 'jpeg', 'tiff', 'bmp')){
 }
 
 
+# Select Gene Ontology option
+if(!is.null(opt$gene.ontology)){
+  gene_ontology <- opt$gene.ontology
+} else {
+  gene_ontology <- "BP"
+}
 
 
 
@@ -439,7 +451,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   
   # GO ENRICHMENT ANALYSIS 
   suppressMessages(library(clusterProfiler))
-  go_bp_pos <- enrichGO(as.data.frame(go_pos)$ENTREZID, 'org.Hs.eg.db', ont="BP", pvalueCutoff=0.01)
+  go_bp_pos <- enrichGO(as.data.frame(go_pos)$ENTREZID, 'org.Hs.eg.db', ont = gene_ontology, pvalueCutoff=0.01)
   go_bp_pos_plot <- ggplot(head(go_bp_pos@result,10), aes(x = Count, y = reorder(Description, Count)))+
     geom_point(aes(size=Count, colour=p.adjust))+
     scale_size(range = c(4,12)) +
@@ -447,7 +459,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
           axis.line.x = element_line(color="black"))+
     scale_color_gradient(low = "springgreen4", high = "chocolate1")+
     xlim(min(go_bp_pos@result$Count), max(go_bp_pos@result$Count))
-  suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("GO_BP_pos.", plot.format), plot = go_bp_pos_plot, device = plot.format))
+  suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("GO_", gene_ontology, "_pos.", plot.format), plot = go_bp_pos_plot, device = plot.format))
 }
 
 
