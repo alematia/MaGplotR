@@ -60,7 +60,7 @@ Examples:
 Rscript MaGplotR.R -i path_to_results_directory
 ```
 ```bash
-Rscript MaGplotR.R -i path_to_results_directory -c path_to_control_file -t 50 -p png -o path_to_output_directory -g path_to_sgRNA_input_directory
+Rscript MaGplotR.R -i path_to_results_directory -c path_to_control_file -t 50 -p png -o path_to_output_directory -r path_to_sgRNA_input_directory -g MF
 ```
 ### Options:
 Mandatory arguments:<br/>
@@ -72,6 +72,7 @@ Optional arguments:<br/>
 -r: (sgRNA input directory): **path** to an existing folder where sgRNA summary files are saved.<br/>
 -t: (top cutoff): number of hits to be shown in heatmaps. 25 is default.<br/>
 -p: (plot format): just write one among these (png is default): png , pdf, ps, jpeg, tiff, bmp.<br/>
+-g: (GO type of terms): write BP, MF or CC (BP is default).<br/>
 
 
 ## Output plots and files
