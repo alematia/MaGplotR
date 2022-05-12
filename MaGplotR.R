@@ -2,7 +2,7 @@
 
 ## Welcome to MaGplotR
 
-options(warn=-1)
+#options(warn=-1)
 
 ## Load libraries
 suppressPackageStartupMessages(library(stringr))
@@ -84,7 +84,6 @@ parser <- add_option(parser,
 parser <- add_option(parser, 
                      opt_str = c("-g", "--ontology"), 
                      type = "character",
-                     default = 'BP',
                      dest = 'gene.ontology',
                      help="A string: BP, MF, CC."
 )
@@ -133,12 +132,7 @@ if (opt$plot.format %in% c('png', 'pdf', 'ps', 'jpeg', 'tiff', 'bmp')){
 
 
 # Select Gene Ontology option
-if(!is.null(opt$gene.ontology)){
-  gene_ontology <- opt$gene.ontology
-} else {
-  gene_ontology <- "BP"
-}
-
+if(!is.null(opt$gene.ontology)){gene_ontology <- opt$gene.ontology}
 
 
 # Read MaGeCK files
@@ -199,17 +193,6 @@ melter <- function(sub_input_files){
 }
 
 
-# Creates a vector of basic x axis labels (T1, T2...)
-#xlabs <- function(){
-#  vector <- c()
-#  num <- 1
-#  for (i in 1:9999){
-#    vector <- c(vector, paste0("T", num))
-#    num <- num + 1
-#  }
-#  return(vector)
-#}
-
 ## Creates sub dataset with gene id and rank
 id_rank_maker_pos <- function(input_files_txt){
   num <- 1
@@ -245,6 +228,7 @@ id_LFC_maker <- function(input_files_txt){
   }
   return(sub_mg_LFC_files)
 }
+
 
 # gene analysis 
 gene_analysis <- function(x = input_files_txt, y = control_file){
@@ -304,8 +288,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
           axis.title.y = element_blank())+
     scale_fill_distiller(palette = "RdYlGn", direction = 1, trans= "reverse", 
                          name="", labels = c("Highest\nposition\nin rank", "Lowest\nposition\nin rank"),
-                         breaks=seq(min(melted_mg_pos$value), max(melted_mg_pos$value),
-                                    by=(max(melted_mg_pos$value)-min(melted_mg_pos$value))))  # Legend scale from highest to lowest position in rank
+                         breaks=seq(1, nrow(sorted_whole_mg_pos), by=nrow(sorted_whole_mg_pos)-1))  # Legend scale from highest to lowest position in rank
   suppressMessages(ggsave(path = output.directory, filename = paste0("heatmap_mageck_pos.", plot.format), plot = heatmap_mg_pos, device = plot.format))
   print(str_glue("- Heatmap (positive selection) saved in output directory."))
   
@@ -395,9 +378,9 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   pre_go_pos <- head(sorted_whole_mg_pos, perc_num_pos)
   go_genes_pos <- pre_go_pos$id
   suppressMessages(go_pos <- select(org.Hs.eg.db,
-              keys = go_genes_pos,
-              columns=c("ENTREZID", "SYMBOL"),
-              keytype="SYMBOL"))
+                                    keys = go_genes_pos,
+                                    columns=c("ENTREZID", "SYMBOL"),
+                                    keytype="SYMBOL"))
   go_pos <- na.omit(go_pos)
   pathways_pos <- enrichPathway(as.data.frame(go_pos)$ENTREZID)
   pathways_pos@result$Description <- gsub("Homo sapiens\r: ", "", as.character(pathways_pos@result$Description))
@@ -414,9 +397,9 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   # Print most enriched pathway and genes.
   ids_vector <- str_split(pathways_pos@result[pathways_pos@result[1,1], "geneID"], "/")[[1]]
   suppressMessages(symb_id <- select(org.Hs.eg.db,
-                    keys = ids_vector,
-                    columns=c("ENTREZID", "SYMBOL"),
-                    keytype="ENTREZID"))
+                                     keys = ids_vector,
+                                     columns=c("ENTREZID", "SYMBOL"),
+                                     keytype="ENTREZID"))
   names_vector <- symb_id$SYMBOL
   names_str <- paste(names_vector, collapse = ", ")
   print(str_glue(
@@ -444,22 +427,23 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     scale_color_gradient(low = "springgreen4", high = "chocolate1")+
     xlim(min(head(pathways_neg@result$Count, 10)), max(head(pathways_neg@result$Count, 10)))
   suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("ReactomePA_neg.", plot.format), plot = pathways_neg_plot, device = plot.format))
-  
-  #suppressMessages(ggsave(path = output.directory, filename = paste0("go_pos.", plot.format), plot = dotplot(pathways_pos), device = plot.format))
   detach("package:org.Hs.eg.db", unload=TRUE)
   print(str_glue("- Reactome Pathway Analysis completed."))
   
-  # GO ENRICHMENT ANALYSIS 
-  suppressMessages(library(clusterProfiler))
-  go_bp_pos <- enrichGO(as.data.frame(go_pos)$ENTREZID, 'org.Hs.eg.db', ont = gene_ontology, pvalueCutoff=0.01)
-  go_bp_pos_plot <- ggplot(head(go_bp_pos@result,10), aes(x = Count, y = reorder(Description, Count)))+
-    geom_point(aes(size=Count, colour=p.adjust))+
-    scale_size(range = c(4,12)) +
-    theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
-          axis.line.x = element_line(color="black"))+
-    scale_color_gradient(low = "springgreen4", high = "chocolate1")+
-    xlim(min(go_bp_pos@result$Count), max(go_bp_pos@result$Count))
-  suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("GO_", gene_ontology, "_pos.", plot.format), plot = go_bp_pos_plot, device = plot.format))
+  # GO ENRICHMENT ANALYSIS - only if user chooses
+  if(!is.null(opt$gene.ontology)){
+    suppressMessages(library(clusterProfiler))
+    suppressMessages(go_bp_pos <- enrichGO(as.data.frame(go_pos)$ENTREZID, 'org.Hs.eg.db', ont = gene_ontology, pvalueCutoff=0.01))
+    go_bp_pos_plot <- ggplot(head(go_bp_pos@result,10), aes(x = Count, y = reorder(Description, Count)))+
+      geom_point(aes(size=Count, colour=p.adjust))+
+      scale_size(range = c(4,12)) +
+      theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
+            axis.line.x = element_line(color="black"))+
+      scale_color_gradient(low = "springgreen4", high = "chocolate1")+
+      xlim(min(go_bp_pos@result$Count), max(go_bp_pos@result$Count))
+    suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("GO_", gene_ontology, "_pos.", plot.format), plot = go_bp_pos_plot, device = plot.format))
+    print(str_glue("- GO Analysis completed."))
+  }
 }
 
 
