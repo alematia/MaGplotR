@@ -2,7 +2,7 @@
 
 ## Welcome to MaGplotR
 
-#options(warn=-1)
+options(warn=-1)
 
 ## Load libraries
 suppressPackageStartupMessages(library(stringr))
@@ -18,15 +18,15 @@ print(str_glue(""))
 print(str_glue("- Loading libraries..."))
 suppressPackageStartupMessages(library(optparse))
 suppressPackageStartupMessages(library(ggplot2))
-suppressPackageStartupMessages(library(tidyr))
 suppressPackageStartupMessages(library(reshape2))
-suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(ReactomePA))
+suppressMessages(library(clusterProfiler))
+#suppressPackageStartupMessages(library(dplyr))
+#suppressPackageStartupMessages(library(tidyr))
 
 
-# option parsing #
-
+#OPTPARSE
 parser <- OptionParser()
 
 
@@ -427,12 +427,60 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     scale_color_gradient(low = "springgreen4", high = "chocolate1")+
     xlim(min(head(pathways_neg@result$Count, 10)), max(head(pathways_neg@result$Count, 10)))
   suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("ReactomePA_neg.", plot.format), plot = pathways_neg_plot, device = plot.format))
-  detach("package:org.Hs.eg.db", unload=TRUE)
   print(str_glue("- Reactome Pathway Analysis completed."))
+  
+  
+  #### CLUSTERING by clusterProfiler.
+  # Top 1 %
+  num <- 1
+  for (i in input_files_txt){
+    input_files_txt[[num]] <- head(input_files_txt[[num]], perc_num_pos)
+    num <- num + 1
+  }
+  # Select just gene ids
+  num <- 1
+  for (i in input_files_txt){
+    input_files_txt[[num]] <- input_files_txt[[num]]$id
+    num <- num + 1
+  }
+  # Annotation
+  num <- 1
+  sym_ids_vector <- c()
+  library(org.Hs.eg.db)
+  print(str_glue("- Clustering in progress..."))
+  for (i in input_files_txt){
+    suppressMessages(sym_ids_vector[[num]] <- select(org.Hs.eg.db,
+                                    keys = input_files_txt[[num]],
+                                    columns=c("ENTREZID", "SYMBOL"),
+                                    keytype="SYMBOL"))
+    num <- num + 1
+  }
+  # Select ENTREZID
+  num <- 1
+  for (i in sym_ids_vector){
+    sym_ids_vector[[num]] <- sym_ids_vector[[num]]$ENTREZID
+    num <- num + 1
+  }
+  # Rename vector indexes
+  num <- 1
+  for (i in sym_ids_vector){
+    names(sym_ids_vector)[[num]] <- paste0("X", num)
+    num <- num + 1
+  }
+  #Create the object
+  cluster_pos <- compareCluster(geneClusters = sym_ids_vector, fun = "enrichPathway")
+  cluster_pos@compareClusterResult$Description <- gsub("Homo sapiens\r: ", "", as.character(cluster_pos@compareClusterResult$Description))
+  cluster_pos@keytype <- "enrichPathway"
+  cluster_pos@readable <- FALSE
+  cluster_pos_readable <- setReadable(cluster_pos, OrgDb = org.Hs.eg.db, keyType="ENTREZID")
+  suppressMessages(ggsave(height=30, width=30, units=c("cm"), path = output.directory, filename = "cluster.pdf", plot = suppressMessages(cnetplot(cluster_pos_readable)), device = "pdf"))
+  print(str_glue("- Clustering completed."))
+  detach("package:org.Hs.eg.db", unload=TRUE)
+  ####
+  
   
   # GO ENRICHMENT ANALYSIS - only if user chooses
   if(!is.null(opt$gene.ontology)){
-    suppressMessages(library(clusterProfiler))
     suppressMessages(go_bp_pos <- enrichGO(as.data.frame(go_pos)$ENTREZID, 'org.Hs.eg.db', ont = gene_ontology, pvalueCutoff=0.01))
     go_bp_pos_plot <- ggplot(head(go_bp_pos@result,10), aes(x = Count, y = reorder(Description, Count)))+
       geom_point(aes(size=Count, colour=p.adjust))+
