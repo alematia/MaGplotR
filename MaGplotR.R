@@ -7,13 +7,13 @@ options(warn=-1)
 ## Load libraries
 suppressPackageStartupMessages(library(stringr))
 print(str_glue(""))
-print(str_glue("            ***Welcome to MaGplotR***"))
+print(str_glue("               ***Welcome to MaGplotR***"))
 print(str_glue(""))
-print(str_glue("O       o O       o O       o O       o O       o"))
-print(str_glue("| O   o | | O   o | | O   o | | O   o | | O   o |"))
-print(str_glue("| | O | | | | O | | | | O | | | | O | | | | O | |"))
-print(str_glue("| o   O | | o   O | | o   O | | o   O | | o   O |"))
-print(str_glue("o       O o       O o       O o       O o       O"))
+print(str_glue("O       o O       o O       o O       o O       o O       o"))
+print(str_glue("| O   o | | O   o | | O   o | | O   o | | O   o | | O   o |"))
+print(str_glue("| | O | | | | O | | | | O | | | | O | | | | O | | | | O | |"))
+print(str_glue("| o   O | | o   O | | o   O | | o   O | | o   O | | o   O |"))
+print(str_glue("o       O o       O o       O o       O o       O o       O"))
 print(str_glue(""))
 print(str_glue("- Loading libraries..."))
 suppressPackageStartupMessages(library(optparse))
@@ -464,17 +464,21 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   # Rename vector indexes
   num <- 1
   for (i in sym_ids_vector){
-    names(sym_ids_vector)[[num]] <- paste0("X", num)
+    names(sym_ids_vector)[[num]] <- num
     num <- num + 1
   }
   #Create the object
   cluster_pos <- compareCluster(geneClusters = sym_ids_vector, fun = "enrichPathway")
-  cluster_pos@compareClusterResult$Description <- gsub("Homo sapiens\r: ", "", as.character(cluster_pos@compareClusterResult$Description))
-  cluster_pos@keytype <- "enrichPathway"
-  cluster_pos@readable <- FALSE
-  cluster_pos_readable <- setReadable(cluster_pos, OrgDb = org.Hs.eg.db, keyType="ENTREZID")
-  suppressMessages(ggsave(height=30, width=30, units=c("cm"), path = output.directory, filename = "cluster.pdf", plot = suppressMessages(cnetplot(cluster_pos_readable)), device = "pdf"))
-  print(str_glue("- Clustering completed."))
+  if (!is.null(cluster_pos)){
+    cluster_pos@compareClusterResult$Description <- gsub("Homo sapiens\r: ", "", as.character(cluster_pos@compareClusterResult$Description))
+    cluster_pos@keytype <- "enrichPathway"
+    cluster_pos@readable <- FALSE
+    cluster_pos_readable <- setReadable(cluster_pos, OrgDb = org.Hs.eg.db, keyType="ENTREZID")
+    suppressMessages(ggsave(height=32, width=32, units=c("cm"), path = output.directory, filename = "cluster.pdf", plot = suppressMessages(cnetplot(cluster_pos_readable)), device = "pdf"))
+    print(str_glue("- Clustering completed."))
+  } else {
+    print(str_glue("- No clusters found."))
+  }
   detach("package:org.Hs.eg.db", unload=TRUE)
   ####
   
