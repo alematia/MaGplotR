@@ -89,9 +89,10 @@ Reactome PA of top 1 % hits<br/>
 ![Screenshot from 2022-05-04 15-23-43](https://user-images.githubusercontent.com/95416488/166690308-e08bb1cd-734a-43e0-9278-154074f44b03.png)
 
 #### Cluster plot<br/>
-![Screenshot from 2022-05-12 14-46-15](https://user-images.githubusercontent.com/95416488/168078203-f41b2c9e-a10d-43d9-8af4-72aac5e54a43.png)
+![Screenshot from 2022-05-12 14-46-15](https://user-images.githubusercontent.com/95416488/168256030-fb922cac-a18c-40df-8be2-5eda7cffe121.png)
+
 
 #### Example of terminal display:<br/>
-![Screenshot from 2022-05-05 13-31-27](https://user-images.githubusercontent.com/95416488/166914813-94a22e29-9586-4932-94ca-41cf78f010be.png)
+![Screenshot from 2022-05-13 11-33-58](https://user-images.githubusercontent.com/95416488/168255876-ea2bbe2a-f26f-4c64-88da-833cd66e6ec5.png)
 
 
