@@ -9,11 +9,13 @@ suppressPackageStartupMessages(library(stringr))
 print(str_glue(""))
 print(str_glue("               ***Welcome to MaGplotR***"))
 print(str_glue(""))
-print(str_glue("O       o O       o O       o O       o O       o O       o"))
-print(str_glue("| O   o | | O   o | | O   o | | O   o | | O   o | | O   o |"))
-print(str_glue("| | O | | | | O | | | | O | | | | O | | | | O | | | | O | |"))
-print(str_glue("| o   O | | o   O | | o   O | | o   O | | o   O | | o   O |"))
-print(str_glue("o       O o       O o       O o       O o       O o       O"))
+print(str_glue("                        v"))
+print(str_glue("O       o O       o O   |   o O       o O       o O       o"))
+print(str_glue("| O   o | | O   o | | O | o | | O   o | | O   o | | O   o |"))
+print(str_glue("| | O | | | | O | | | | | | | | | O | | | | O | | | | O | |"))
+print(str_glue("| o   O | | o   O | | o | O | | o   O | | o   O | | o   O |"))
+print(str_glue("o       O o       O o   |   O o       O o       O o       O"))
+print(str_glue("                        ^"))
 print(str_glue(""))
 print(str_glue("- Loading libraries..."))
 suppressPackageStartupMessages(library(optparse))
@@ -391,6 +393,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     scale_size(range = c(4,12))+
     theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
           axis.line.x = element_line(color="black"))+
+    ylab("Pathway")+
     scale_color_gradient(low = "springgreen4", high = "chocolate1")+
     xlim(min(head(pathways_pos@result$Count, 10)), max(head(pathways_pos@result$Count, 10)))
   suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("ReactomePA_pos.", plot.format), plot = pathways_pos_plot, device = plot.format))
@@ -424,6 +427,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     scale_size(range = c(4,12))+
     theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
           axis.line.x = element_line(color="black"))+
+    ylab("Pathway")+
     scale_color_gradient(low = "springgreen4", high = "chocolate1")+
     xlim(min(head(pathways_neg@result$Count, 10)), max(head(pathways_neg@result$Count, 10)))
   suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("ReactomePA_neg.", plot.format), plot = pathways_neg_plot, device = plot.format))
@@ -450,9 +454,9 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   print(str_glue("- Clustering in progress..."))
   for (i in input_files_txt){
     suppressMessages(sym_ids_vector[[num]] <- select(org.Hs.eg.db,
-                                    keys = input_files_txt[[num]],
-                                    columns=c("ENTREZID", "SYMBOL"),
-                                    keytype="SYMBOL"))
+                                                     keys = input_files_txt[[num]],
+                                                     columns=c("ENTREZID", "SYMBOL"),
+                                                     keytype="SYMBOL"))
     num <- num + 1
   }
   # Select ENTREZID
