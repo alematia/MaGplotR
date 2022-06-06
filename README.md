@@ -85,7 +85,8 @@ Optional arguments:<br/>
 ## Output plots and files
 #### Boxplot<br/>
 Representation of all gene LFCs in each experiment (and control if supplied). Gives a quick view of selection / scattering for every experiment.
-![genes_boxplot](https://user-images.githubusercontent.com/95416488/165910220-adba030f-6b99-4869-b38f-47dfbc09ced1.png)
+![genes_boxplot](https://user-images.githubusercontent.com/95416488/172137508-eac5ca52-4b8b-4362-a672-c6c89ad4f35c.png)
+
 
 #### Heatmap with control<br/>
 Heatmap represents gene ranks in each experiment. Control plot shows the LFC of control (cyan) and the mean LFC of all experiments (red) for each gene.<br/>
@@ -100,6 +101,5 @@ Reactome PA of top 1 % hits<br/>
 
 
 #### Example of terminal display:<br/>
-![Screenshot from 2022-05-13 11-33-58](https://user-images.githubusercontent.com/95416488/168255876-ea2bbe2a-f26f-4c64-88da-833cd66e6ec5.png)
-
+![Screenshot from 2022-06-06 11-46-42](https://user-images.githubusercontent.com/95416488/172137707-6d300a97-5fb1-4e31-a77b-a8341b8790d4.png)
 
