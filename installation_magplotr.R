@@ -33,9 +33,19 @@ if (!("tidyverse" %in% installed.packages())) {
   install.packages("tidyverse");
 }
 
-if (!require("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
+if (!("BiocManager" %in% installed.packages())) { 
+  install.packages("BiocManager");
+}
 
-BiocManager::install("org.Hs.eg.db")
-BiocManager::install("ReactomePA")
-BiocManager::install("clusterProfiler")
+if (!("org.Hs.eg.db" %in% installed.packages())) { 
+  BiocManager::install("org.Hs.eg.db");
+}
+
+if (!("ReactomePA" %in% installed.packages())) { 
+  BiocManager::install("ReactomePA");
+}
+
+if (!("clusterProfiler" %in% installed.packages())) { 
+  BiocManager::install("clusterProfiler");
+}
+
