@@ -103,11 +103,10 @@ parser <- add_option(parser,
 opt = parse_args(parser)
 
 
-first_dir <- getwd()  # Get wd.
+first_dir <- getwd()
 
 # Set input directory (gene summary files)
 input_dir_path = opt$input.directory
-
 
 
 # Set output directory
@@ -156,6 +155,7 @@ setwd(input_dir_path)  # Set wd to read gene summary files.
 MaGeCK_files = list.files(pattern="*.txt")
 input_files_txt = lapply(MaGeCK_files, read.delim)
 print(str_glue("- MaGeCK gene summary data detected."))
+setwd(first_dir)
 if(is.na(opt$control.file)){ 
   control_file <- NULL
   print(str_glue("- No control file detected."))
@@ -176,7 +176,6 @@ if(!is.null(opt$sgrna.input.directory)){
   #  print("No control file detected.")
   #}
 }
-
 
 
 setwd(first_dir)
@@ -252,7 +251,6 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   sub_input_files <- genes_shortener(input_files_txt)
   melted_sub_input_files <- melter(sub_input_files)
   bound <- bind_rows(as.vector(melted_sub_input_files)) # Binds all id_lfc dfs
-  #experiments_labs <- xlabs()
   
   ## 1. Boxplot with control if supplied
   if (is.null(control_file)){
@@ -287,7 +285,6 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   rank_data_mg_pos <- merged_mg_pos %>% 
     select(matches(" "))
   merged_mg_pos$RankMeans <- rowMeans(rank_data_mg_pos)
-  ## Generate csv file with rank records.
   sorted_whole_mg_pos <- merged_mg_pos[order(merged_mg_pos$RankMeans),]
   ## Head top 25
   top_mg_pos <- head(sorted_whole_mg_pos, as.numeric(top_cutoff))
