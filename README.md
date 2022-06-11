@@ -52,7 +52,13 @@ Download `installation_magplotr.R` and run the following command in Linux termin
 ```bash
 Rscript installation_magplotr.R
 ```
+*Note: some of these packages like tidyverse may have additional dependencies: install libcurl, openssl and libxml-2.0 libraries to avoid this. Example for debian based systems:
 
+```bash
+sudo apt install libcurl4-openssl-dev
+sudo apt install libssl-dev
+sudo apt install libxml2-dev
+```
 
 
 ## Usage
