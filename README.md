@@ -65,7 +65,7 @@ sudo apt install libxml2-dev
 #### Recommendations:
 Create a directory and copy there all the gene summary files you want to analyze. This will be the input directory (-i). These files names usually end with ".gene_summary.txt" as MaGeCK output. MaGplotR uses the experiment name from the filename (i.e. for "exp7.gene_summary.txt" file, "exp7" will be displayed in the plots).<br/>
 Optionally, do the same thing with sgRNA summary files (-r). If you have a control gene summary file to analyze (-c), we recommend to put it in the parent directory for simplicity.<br/>
-Next, open a terminal in linux and change directory where the MaGplotR.R is located. Then type the commands as in the examples. Make sure you give the  path to the file/folder as argument, either the complete path, or from current directory: ```./input_directory/``` . You can also provide an output folder, where files will be saved, otherwise, input directory is default. You can also choose whether to analyze by positive or negative selction, run downstream GO enrichment analysis, select different output formats and top cutoff.<br/>
+Next, open a terminal in linux and change directory where the MaGplotR.R is located. Then type the commands as in the examples. Make sure you give the  path to the file/folder as argument, either the complete path, or from current directory: ```./input_directory/``` . You can also provide an output folder, where files will be saved, otherwise, input directory is default. You can also choose whether to analyze by positive or negative selection, run downstream GO enrichment analysis, select different output formats and top cutoff.<br/>
 
 Examples:
 ```bash
