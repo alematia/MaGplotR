@@ -49,3 +49,6 @@ if (!("clusterProfiler" %in% installed.packages())) {
   BiocManager::install("clusterProfiler");
 }
 
+if (!("matrixStats" %in% installed.packages())) { 
+  BiocManager::install("matrixStats");
+}
