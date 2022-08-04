@@ -24,6 +24,7 @@ suppressPackageStartupMessages(library(reshape2))
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(ReactomePA))
 suppressMessages(library(clusterProfiler))
+suppressMessages(library(matrixStats))
 #suppressPackageStartupMessages(library(dplyr))
 #suppressPackageStartupMessages(library(tidyr))
 
@@ -284,12 +285,16 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   ## Add the mean of all exp ranks to each gene as a new column.
   rank_data_mg_pos <- merged_mg_pos %>% 
     select(matches(" "))
-  merged_mg_pos$RankMeans <- rowMeans(rank_data_mg_pos)
-  sorted_whole_mg_pos <- merged_mg_pos[order(merged_mg_pos$RankMeans),]
+  
+  merged_mg_pos_x <- merged_mg_pos  # Replicate df to add more cols
+  merged_mg_pos_x$RankMeans <- rowMeans(rank_data_mg_pos)  # Add means
+  merged_mg_pos_x$RankVar <- rowVars(as.matrix(rank_data_mg_pos)) # Add Variance of the rank scores
+
+  sorted_whole_mg_pos <- merged_mg_pos_x[order(merged_mg_pos_x$RankMeans),]
   ## Head top 25
   top_mg_pos <- head(sorted_whole_mg_pos, as.numeric(top_cutoff))
   ## Melt df to tidy large format
-  melted_mg_pos <- melt(top_mg_pos,id.vars = c("id", "RankMeans"))
+  melted_mg_pos <- melt(top_mg_pos,id.vars = c("id", "RankMeans", "RankVar"))
   heatmap_mg_pos <- ggplot(melted_mg_pos, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
     geom_tile(colour="white", size=.2)+
     ggtitle("Gene position in positive rank")+
@@ -306,10 +311,14 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   merged_mg_neg <- sub_mg_rank_files_neg %>% reduce(inner_join, by = "id")
   rank_data_mg_neg <- merged_mg_neg %>% 
     select(matches(" "))
-  merged_mg_neg$RankMeans <- rowMeans(rank_data_mg_neg)
-  sorted_whole_mg_neg <- merged_mg_neg[order(merged_mg_neg$RankMeans),]
+  
+  merged_mg_neg_x <- merged_mg_neg  # Replicate df to add more cols
+  merged_mg_neg_x$RankMeans <- rowMeans(rank_data_mg_neg)  # Add means
+  merged_mg_neg_x$RankVar <- rowVars(as.matrix(rank_data_mg_neg)) # Add Variance of the rank scores
+  
+  sorted_whole_mg_neg <- merged_mg_neg_x[order(merged_mg_neg_x$RankMeans),]
   top_mg_neg <- head(sorted_whole_mg_neg, as.numeric(top_cutoff))
-  melted_mg_neg <- melt(top_mg_neg,id.vars = c("id", "RankMeans"))
+  melted_mg_neg <- melt(top_mg_neg,id.vars = c("id", "RankMeans", "RankVar"))
   heatmap_mg_neg <- ggplot(melted_mg_neg, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
     geom_tile(colour="white", size=.2)+
     ggtitle("Gene position in negative rank")+
