@@ -30,6 +30,11 @@ Heatmap representation gives a rapid view of how top hits behave in the set of e
 As extra features, the top 1 % of positive and negative hits are analyzed with [Reactome Pathway Analysis](https://bioconductor.org/packages/release/bioc/html/ReactomePA.html) and [clusterProfiler](https://bioconductor.org/packages/release/bioc/html/clusterProfiler.html) generating plots for the most enriched pathways and clusters among the data sets. Optionally, GO analysis is available (see options below). These analysis are run using [Genome wide annotation for Human](https://bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html).
 
 
+## Getting started
+```bash
+git clone https://github.com/alematia/MaGplotR.git
+```
+
 ## Dependencies
 You can either install these packages from R terminal or by running the installation script from Linux terminal.<br/>
 
