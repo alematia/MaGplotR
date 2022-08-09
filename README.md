@@ -102,7 +102,8 @@ Representation of all gene LFCs in each experiment (and control if supplied). Gi
 
 #### Heatmap with control<br/>
 Heatmap represents gene ranks in each experiment. Control plot shows the LFC of control (cyan) and the mean LFC of all experiments (red) for each gene.<br/>
-![heatmap_and_control](https://user-images.githubusercontent.com/95416488/165736171-025fa334-7f20-4196-ae27-9ba433f86435.jpg)
+![heatmap_and_control](https://user-images.githubusercontent.com/95416488/183723868-fd6a392e-33bc-4f70-abbe-5b03942470fe.png)
+
 
 #### Reactome Pathway Analysis<br/>
 Reactome PA of top 1 % hits<br/>
