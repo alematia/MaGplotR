@@ -306,100 +306,100 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   sorted_whole_mg_neg <- merged_mg_neg_x[order(merged_mg_neg_x$RankMeans),]  # Reorder df by RankMeans
   top_mg_neg <- head(sorted_whole_mg_neg, as.numeric(top_cutoff))  # Head top 25
   if (selection == "pos"){
-  ## Preparation for LFC heatmap:
-  ordered_vector_pos <- top_mg_pos$id  # Vector with the ordered list of genes (by RankMeans)
-  ordered_LFC_heatmap_df_pos <- merged_mg_LFC[match(ordered_vector_pos, merged_mg_LFC$id),]  # Arranges LFCs df by vector
-  ordered_LFC_heatmap_df_pos$RankMeans <- top_mg_pos$RankMeans  # Adds RankMeans col
-  melted_LFC_pos <- melt(ordered_LFC_heatmap_df_pos,id.vars = c("id", "RankMeans"))  # Preparation for heatmap
-  melted_mg_pos <- melt(top_mg_pos,id.vars = c("id", "RankMeans", "RankSD"))  # Preparation for heatmap
-  ## Set limits to LFCs. All above 10 and below -5 is considered as max and min respectively.
-  melted_LFC_pos$value[melted_LFC_pos$value > 10] <- 10  # All LFCs above 10 are now 10.
-  melted_LFC_pos$value[melted_LFC_pos$value < -5] <- -5  # All LFCs below -5 are now -5.
-  heatmap_mg_pos <- ggplot(melted_LFC_pos, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
-    geom_tile(colour="black", size=.2)+
-    ggtitle("Gene LFC")+
-    geom_text(size=1.5, aes(label = round(melted_mg_pos$value, 1)))+
-    theme(panel.background = element_blank(),
-          legend.position = "left",
-          axis.text.x = element_text(angle = 45, hjust = 1),
-          axis.title.x = element_blank(),
-          axis.title.y = element_blank())+
-    scale_fill_distiller(palette = "RdYlGn", direction = 1, name="LFC",
-                         limits = c(-5, 10), labels=c("< -5", "0", "5", "> 10"),
-                         values = c(0, 0.25, 0.45,1))
+    ## Preparation for LFC heatmap:
+    ordered_vector_pos <- top_mg_pos$id  # Vector with the ordered list of genes (by RankMeans)
+    ordered_LFC_heatmap_df_pos <- merged_mg_LFC[match(ordered_vector_pos, merged_mg_LFC$id),]  # Arranges LFCs df by vector
+    ordered_LFC_heatmap_df_pos$RankMeans <- top_mg_pos$RankMeans  # Adds RankMeans col
+    melted_LFC_pos <- melt(ordered_LFC_heatmap_df_pos,id.vars = c("id", "RankMeans"))  # Preparation for heatmap
+    melted_mg_pos <- melt(top_mg_pos,id.vars = c("id", "RankMeans", "RankSD"))  # Preparation for heatmap
+    ## Set limits to LFCs. All above 10 and below -5 is considered as max and min respectively.
+    melted_LFC_pos$value[melted_LFC_pos$value > 10] <- 10  # All LFCs above 10 are now 10.
+    melted_LFC_pos$value[melted_LFC_pos$value < -5] <- -5  # All LFCs below -5 are now -5.
+    heatmap_mg_pos <- ggplot(melted_LFC_pos, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
+      geom_tile(colour="black", size=.2)+
+      ggtitle("Gene LFC")+
+      geom_text(size=1.5, aes(label = round(melted_mg_pos$value, 1)))+
+      theme(panel.background = element_blank(),
+            legend.position = "left",
+            axis.text.x = element_text(angle = 45, hjust = 1),
+            axis.title.x = element_blank(),
+            axis.title.y = element_blank())+
+      scale_fill_distiller(palette = "RdYlGn", direction = 1, name="LFC",
+                           limits = c(-5, 10), labels=c("< -5", "0", "5", "> 10"),
+                           values = c(0, 0.25, 0.45,1))
     #scale_fill_distiller(palette = "YlGn", direction = 1, name="LFC",
     #                    limits = c(-5, 10), labels=c("< -5", "0", "5", "> 10"))
     #scale_fill_distiller(palette = 4, direction = 1, name="LFC",
     #                     limits = c(min(melted_LFC$value), max(melted_LFC$value)))
     #scale_fill_distiller(palette = 5, limits = c(min(melted_LFC$value)-2, max(melted_LFC$value)+2), direction = 1)
-  
-  ### Previous heatmap
-  ## Melt df to tidy large format
-  #melted_mg_pos <- melt(top_mg_pos,id.vars = c("id", "RankMeans", "RankSD"))
-  #heatmap_mg_pos <- ggplot(melted_mg_pos, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
-  #  geom_tile(colour="white", size=.2)+
-  #  ggtitle("Gene position in positive rank")+
-  #  theme(panel.background = element_blank(),
-  #        legend.position = "left",
-  #        axis.text.x = element_text(angle = 45, hjust = 1),
-  #        axis.title.x = element_blank(),
-  #        axis.title.y = element_blank())+
-  #  scale_fill_distiller(palette = "RdYlGn", direction = 1, trans= "reverse", 
-  #                       name="", labels = c("Highest\nposition\nin rank", "Lowest\nposition\nin rank"),
-  #                       breaks=seq(1, nrow(sorted_whole_mg_pos), by=nrow(sorted_whole_mg_pos)-1))  # Legend scale from highest to lowest position in rank
-
+    
+    ### Previous heatmap
+    ## Melt df to tidy large format
+    #melted_mg_pos <- melt(top_mg_pos,id.vars = c("id", "RankMeans", "RankSD"))
+    #heatmap_mg_pos <- ggplot(melted_mg_pos, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
+    #  geom_tile(colour="white", size=.2)+
+    #  ggtitle("Gene position in positive rank")+
+    #  theme(panel.background = element_blank(),
+    #        legend.position = "left",
+    #        axis.text.x = element_text(angle = 45, hjust = 1),
+    #        axis.title.x = element_blank(),
+    #        axis.title.y = element_blank())+
+    #  scale_fill_distiller(palette = "RdYlGn", direction = 1, trans= "reverse", 
+    #                       name="", labels = c("Highest\nposition\nin rank", "Lowest\nposition\nin rank"),
+    #                       breaks=seq(1, nrow(sorted_whole_mg_pos), by=nrow(sorted_whole_mg_pos)-1))  # Legend scale from highest to lowest position in rank
+    
   } else {
-  ## Preparation for LFC heatmap:
-  ordered_vector_neg <- top_mg_neg$id  # Vector with the ordered list of genes (by RankMeans)
-  ordered_LFC_heatmap_df_neg <- merged_mg_LFC[match(ordered_vector_neg, merged_mg_LFC$id),]  # Arranges LFCs df by vector
-  ordered_LFC_heatmap_df_neg$RankMeans <- top_mg_neg$RankMeans  # Adds RankMeans col
-  melted_LFC_neg <- melt(ordered_LFC_heatmap_df_neg,id.vars = c("id", "RankMeans"))  # Preparation for heatmap
-  melted_mg_neg <- melt(top_mg_neg,id.vars = c("id", "RankMeans", "RankSD"))  # Preparation for heatmap
-  ## Set limits to LFCs. All above 10 and below -5 is considered as max and min respectively.
-  melted_LFC_neg$value[melted_LFC_neg$value > 10] <- 10  # All LFCs above 10 are now 10.
-  melted_LFC_neg$value[melted_LFC_neg$value < -5] <- -5  # All LFCs below -5 are now -5.
-  heatmap_mg_neg <- ggplot(melted_LFC_neg, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
-    geom_tile(colour="black", size=.2)+
-    ggtitle("Gene LFC")+
-    geom_text(size=1.5, aes(label = round(melted_mg_neg$value, 1)))+
-    theme(panel.background = element_blank(),
-          legend.position = "left",
-          axis.text.x = element_text(angle = 45, hjust = 1),
-          axis.title.x = element_blank(),
-          axis.title.y = element_blank())+
-    scale_fill_distiller(palette = "RdYlGn", direction = 1, name="LFC",
-                         limits = c(-5, 10), labels=c("< -5", "0", "5", "> 10"),
-                         values = c(0, 0.25, 0.45,1))
-  #scale_fill_distiller(palette = "YlGn", direction = 1, name="LFC",
-  #                    limits = c(-5, 10), labels=c("< -5", "0", "5", "> 10"))
-  #scale_fill_distiller(palette = 4, direction = 1, name="LFC",
-  #                     limits = c(min(melted_LFC$value), max(melted_LFC$value)))
-  #scale_fill_distiller(palette = 5, limits = c(min(melted_LFC$value)-2, max(melted_LFC$value)+2), direction = 1)
-  
-  ## Previous heatmap
-  #sub_mg_rank_files_neg <- id_rank_maker_neg(input_files_txt)
-  #merged_mg_neg <- sub_mg_rank_files_neg %>% reduce(inner_join, by = "id")
-  #rank_data_mg_neg <- merged_mg_neg %>% 
-  #  select(matches(" "))
-  #merged_mg_neg_x <- merged_mg_neg  # Replicate df to add more cols
-  #merged_mg_neg_x$RankMeans <- rowMeans(rank_data_mg_neg)  # Add means
-  #merged_mg_neg_x$RankSD <- rowSds(as.matrix(rank_data_mg_neg)) # Add Variance of the rank scores
-  #sorted_whole_mg_neg <- merged_mg_neg_x[order(merged_mg_neg_x$RankMeans),]
-  #top_mg_neg <- head(sorted_whole_mg_neg, as.numeric(top_cutoff))
-  #melted_mg_neg <- melt(top_mg_neg,id.vars = c("id", "RankMeans", "RankSD"))
-  #heatmap_mg_neg <- ggplot(melted_mg_neg, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
-  #  geom_tile(colour="white", size=.2)+
-  #  ggtitle("Gene position in negative rank")+
-  #  theme(panel.background = element_blank(),
-  #        legend.position = "left",
-  #        axis.text.x = element_text(angle = 45, hjust = 1),
-  #        axis.title.x = element_blank(),
-  #        axis.title.y = element_blank())+
-  #  scale_fill_distiller(palette = "RdYlGn", direction = 1, trans= "reverse", 
-  #                       name="", labels = c("Highest\nposition\nin rank", "Lowest\nposition\nin rank"),
-  #                       breaks=seq(min(melted_mg_neg$value), max(melted_mg_neg$value),
-  #                                  by=(max(melted_mg_neg$value)-min(melted_mg_neg$value))))  # Legend scale from highest to lowest position in rank
-  
+    ## Preparation for LFC heatmap:
+    ordered_vector_neg <- top_mg_neg$id  # Vector with the ordered list of genes (by RankMeans)
+    ordered_LFC_heatmap_df_neg <- merged_mg_LFC[match(ordered_vector_neg, merged_mg_LFC$id),]  # Arranges LFCs df by vector
+    ordered_LFC_heatmap_df_neg$RankMeans <- top_mg_neg$RankMeans  # Adds RankMeans col
+    melted_LFC_neg <- melt(ordered_LFC_heatmap_df_neg,id.vars = c("id", "RankMeans"))  # Preparation for heatmap
+    melted_mg_neg <- melt(top_mg_neg,id.vars = c("id", "RankMeans", "RankSD"))  # Preparation for heatmap
+    ## Set limits to LFCs. All above 10 and below -5 is considered as max and min respectively.
+    melted_LFC_neg$value[melted_LFC_neg$value > 10] <- 10  # All LFCs above 10 are now 10.
+    melted_LFC_neg$value[melted_LFC_neg$value < -5] <- -5  # All LFCs below -5 are now -5.
+    heatmap_mg_neg <- ggplot(melted_LFC_neg, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
+      geom_tile(colour="black", size=.2)+
+      ggtitle("Gene LFC")+
+      geom_text(size=1.5, aes(label = round(melted_mg_neg$value, 1)))+
+      theme(panel.background = element_blank(),
+            legend.position = "left",
+            axis.text.x = element_text(angle = 45, hjust = 1),
+            axis.title.x = element_blank(),
+            axis.title.y = element_blank())+
+      scale_fill_distiller(palette = "RdYlGn", direction = 1, name="LFC",
+                           limits = c(-5, 10), labels=c("< -5", "0", "5", "> 10"),
+                           values = c(0, 0.25, 0.45,1))
+    #scale_fill_distiller(palette = "YlGn", direction = 1, name="LFC",
+    #                    limits = c(-5, 10), labels=c("< -5", "0", "5", "> 10"))
+    #scale_fill_distiller(palette = 4, direction = 1, name="LFC",
+    #                     limits = c(min(melted_LFC$value), max(melted_LFC$value)))
+    #scale_fill_distiller(palette = 5, limits = c(min(melted_LFC$value)-2, max(melted_LFC$value)+2), direction = 1)
+    
+    ## Previous heatmap
+    #sub_mg_rank_files_neg <- id_rank_maker_neg(input_files_txt)
+    #merged_mg_neg <- sub_mg_rank_files_neg %>% reduce(inner_join, by = "id")
+    #rank_data_mg_neg <- merged_mg_neg %>% 
+    #  select(matches(" "))
+    #merged_mg_neg_x <- merged_mg_neg  # Replicate df to add more cols
+    #merged_mg_neg_x$RankMeans <- rowMeans(rank_data_mg_neg)  # Add means
+    #merged_mg_neg_x$RankSD <- rowSds(as.matrix(rank_data_mg_neg)) # Add Variance of the rank scores
+    #sorted_whole_mg_neg <- merged_mg_neg_x[order(merged_mg_neg_x$RankMeans),]
+    #top_mg_neg <- head(sorted_whole_mg_neg, as.numeric(top_cutoff))
+    #melted_mg_neg <- melt(top_mg_neg,id.vars = c("id", "RankMeans", "RankSD"))
+    #heatmap_mg_neg <- ggplot(melted_mg_neg, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
+    #  geom_tile(colour="white", size=.2)+
+    #  ggtitle("Gene position in negative rank")+
+    #  theme(panel.background = element_blank(),
+    #        legend.position = "left",
+    #        axis.text.x = element_text(angle = 45, hjust = 1),
+    #        axis.title.x = element_blank(),
+    #        axis.title.y = element_blank())+
+    #  scale_fill_distiller(palette = "RdYlGn", direction = 1, trans= "reverse", 
+    #                       name="", labels = c("Highest\nposition\nin rank", "Lowest\nposition\nin rank"),
+    #                       breaks=seq(min(melted_mg_neg$value), max(melted_mg_neg$value),
+    #                                  by=(max(melted_mg_neg$value)-min(melted_mg_neg$value))))  # Legend scale from highest to lowest position in rank
+    
   }
   
   # Save pos or neg
@@ -470,7 +470,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   }
   
   ## REACTOME PATHWAY ANALYSIS
-  suppressPackageStartupMessages(library(org.Hs.eg.db)) # Library is loaded here to avoid overlapping function errors
+  suppressPackageStartupMessages(library(org.Hs.eg.db))  # Library is loaded here to avoid overlapping function errors
   
   #Reactome pos
   perc_num_pos <- round(nrow(sorted_whole_mg_pos)*0.01)  # Obtain the top 1 %.
@@ -484,14 +484,16 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   pathways_pos <- enrichPathway(as.data.frame(go_pos)$ENTREZID)
   pathways_pos@result$Description <- gsub("Homo sapiens\r: ", "", as.character(pathways_pos@result$Description))
   pathways_pos@result <- pathways_pos@result[order(-pathways_pos@result$Count),]
-  pathways_pos_plot <- ggplot(head(pathways_pos@result,10), aes(x = Count, y = reorder(Description, Count)))+
-    geom_point(aes(size=Count, colour=p.adjust))+
-    scale_size(range = c(4,12))+
+  pathways_pos_plot <- ggplot(head(pathways_pos@result,10), aes(x = 0, y = reorder(Description, Count)))+
+    geom_point(stat = "identity", aes(size=Count, colour=p.adjust))+
+    scale_size(range = c(4,13))+
     theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
-          axis.line.x = element_line(color="black"))+
+          axis.line.x = element_line(color="black"), axis.text.x = element_blank(),
+          axis.ticks.x = element_blank())+
     ylab("Pathway")+
-    scale_color_gradient(low = "springgreen4", high = "chocolate1")+
-    xlim(min(head(pathways_pos@result$Count, 10)), max(head(pathways_pos@result$Count, 10)))
+    xlab("Count")+
+    scale_color_distiller(palette = "RdPu", values = c(0, 0.25, 1))
+  #OrRd #RdPu #YlGn
   
   #Reactome neg
   perc_num_neg <- round(nrow(sorted_whole_mg_neg)*0.01)  # Obtain the top 1 %.
@@ -505,14 +507,15 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   pathways_neg <- enrichPathway(as.data.frame(go_neg)$ENTREZID)
   pathways_neg@result$Description <- gsub("Homo sapiens\r: ", "", as.character(pathways_neg@result$Description))
   pathways_neg@result <- pathways_neg@result[order(-pathways_neg@result$Count),]
-  pathways_neg_plot <- ggplot(head(pathways_neg@result,10), aes(x = Count, y = reorder(Description, Count)))+
-    geom_point(aes(size=Count, colour=p.adjust))+
-    scale_size(range = c(4,12))+
+  pathways_neg_plot <- ggplot(head(pathways_neg@result,10), aes(x = 0, y = reorder(Description, Count)))+
+    geom_point(stat = "identity", aes(size=Count, colour=p.adjust))+
+    scale_size(range = c(4,13))+
     theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
-          axis.line.x = element_line(color="black"))+
+          axis.line.x = element_line(color="black"), axis.text.x = element_blank(),
+          axis.ticks.x = element_blank())+
     ylab("Pathway")+
-    scale_color_gradient(low = "springgreen4", high = "chocolate1")+
-    xlim(min(head(pathways_neg@result$Count, 10)), max(head(pathways_neg@result$Count, 10)))
+    xlab("Count")+
+    scale_color_distiller(palette = "RdPu", values = c(0, 0.25, 1))
   
   
   #Save pos or neg
