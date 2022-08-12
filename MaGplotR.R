@@ -1,5 +1,3 @@
-#!/usr/bin/env R
-
 ## Welcome to MaGplotR
 
 options(warn=-1)
@@ -481,7 +479,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
                                     columns=c("ENTREZID", "SYMBOL"),
                                     keytype="SYMBOL"))
   go_pos <- na.omit(go_pos)
-  pathways_pos <- enrichPathway(as.data.frame(go_pos)$ENTREZID)
+  pathways_pos <- enrichPathway(as.data.frame(go_pos)$ENTREZID, organism = "human", readable = TRUE)
   pathways_pos@result$Description <- gsub("Homo sapiens\r: ", "", as.character(pathways_pos@result$Description))
   pathways_pos@result <- pathways_pos@result[order(-pathways_pos@result$Count),]
   pathways_pos_plot <- ggplot(head(pathways_pos@result,10), aes(x = 0, y = reorder(Description, Count)))+
@@ -504,7 +502,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
                                     columns=c("ENTREZID", "SYMBOL"),
                                     keytype="SYMBOL"))
   go_neg <- na.omit(go_neg)
-  pathways_neg <- enrichPathway(as.data.frame(go_neg)$ENTREZID)
+  pathways_neg <- enrichPathway(as.data.frame(go_neg)$ENTREZID, organism = "human", readable = TRUE)
   pathways_neg@result$Description <- gsub("Homo sapiens\r: ", "", as.character(pathways_neg@result$Description))
   pathways_neg@result <- pathways_neg@result[order(-pathways_neg@result$Count),]
   pathways_neg_plot <- ggplot(head(pathways_neg@result,10), aes(x = 0, y = reorder(Description, Count)))+
@@ -524,26 +522,16 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     write.csv(pathways_pos@result, paste0(output.directory, "/ReactomePA_pos.csv"), row.names = FALSE)
     # Print most enriched pathway and genes.
     ids_vector <- str_split(pathways_pos@result[pathways_pos@result[1,1], "geneID"], "/")[[1]]
-    suppressMessages(symb_id <- select(org.Hs.eg.db,
-                                       keys = ids_vector,
-                                       columns=c("ENTREZID", "SYMBOL"),
-                                       keytype="ENTREZID"))
-    names_vector <- symb_id$SYMBOL
-    names_str <- paste(names_vector, collapse = ", ")
+    names_str <- paste(ids_vector, collapse = ", ")
     print(str_glue(
       "- Most enriched pathway (pos) is: '", pathways_pos@result[pathways_pos@result[1,1], "Description"], "' with genes: ", names_str, ".")
-      )
+    )
   } else {
     suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("ReactomePA_neg.", plot.format), plot = pathways_neg_plot, device = plot.format))
     write.csv(pathways_neg@result, paste0(output.directory, "/ReactomePA_neg.csv"), row.names = FALSE)
     # Print most enriched pathway and genes.
     ids_vector <- str_split(pathways_neg@result[pathways_neg@result[1,1], "geneID"], "/")[[1]]
-    suppressMessages(symb_id <- select(org.Hs.eg.db,
-                                       keys = ids_vector,
-                                       columns=c("ENTREZID", "SYMBOL"),
-                                       keytype="ENTREZID"))
-    names_vector <- symb_id$SYMBOL
-    names_str <- paste(names_vector, collapse = ", ")
+    names_str <- paste(ids_vector, collapse = ", ")
     print(str_glue(
       "- Most enriched pathway (neg) is: '", pathways_neg@result[pathways_neg@result[1,1], "Description"], "' with genes: ", names_str, ".")
     )
