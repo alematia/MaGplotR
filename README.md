@@ -78,7 +78,7 @@ Examples:
 Rscript MaGplotR.R -i path_to_results_directory/
 ```
 ```bash
-Rscript MaGplotR.R -i path_to_results_directory/ -c path_to_control_file -s neg -t 50 -p png -o path_to_output_directory/ -r path_to_sgRNA_input_directory -g MF
+Rscript MaGplotR.R -i path_to_results_directory/ -o path_to_output_directory/ -c path_to_control_file -s neg -t 50 -p png -r path_to_sgRNA_input_directory -g MF -b y
 ```
 ### Options:
 Mandatory arguments:<br/>
@@ -92,6 +92,7 @@ Optional arguments:<br/>
 -t: (top cutoff): number of hits to be shown in heatmaps. 25 is default.<br/>
 -p: (plot format): just write one among these (png is default): png , pdf, ps, jpeg, tiff, bmp.<br/>
 -g: (GO type of terms): write BP, MF or CC (no GO analysis as default).<br/>
+-b: (colour blind): write y or n (no is default).<br/>
 
 
 ## Output plots and files
