@@ -258,8 +258,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
       geom_jitter(position = position_jitter(width = 0.25) , size = 0.005, alpha = 0.05, aes(colour=variable))+
       xlab("Test experiments")+
       ylab("Genes Log2 Fold Change (LFC)")+
-      theme(legend.position = "None", axis.text.x = element_text(size = 10, angle = 45, hjust = 1))#+
-    #scale_x_discrete(labels=experiments_labs, )
+      theme(legend.position = "None", axis.text.x = element_text(size = 10, angle = 45, hjust = 1))
   } else {
     sub_control_mg <- data.frame(id = control_file$id, LFC = control_file$pos.lfc)
     sub_control_mg2 <- data.frame(Control = control_file$id, LFC = control_file$pos.lfc)
@@ -275,35 +274,22 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   suppressMessages(ggsave(path = output.directory, filename = paste0("genes_boxplot.", plot.format), plot = boxplot, device = plot.format))
   print(str_glue("- Genes boxplot saved in output directory."))
   
-  
   ## 2. Heatmaps + record csv files (pos and neg).
   ## These 2 lines already existed in the code for the control df purpose.
   sub_mg_LFC_files <- id_LFC_maker(input_files_txt)
   merged_mg_LFC <- sub_mg_LFC_files %>% reduce(inner_join, by = "id")  # Merge all dfs by id
   #######################################################
-  ## Preparation for pos and neg
-  sub_mg_rank_files_pos <- id_rank_maker_pos(input_files_txt)
-  merged_mg_pos <- sub_mg_rank_files_pos %>% reduce(inner_join, by = "id")  # Merge all dfs by id
-  ## Add the mean of all exp ranks to each gene as a new column.
-  rank_data_mg_pos <- merged_mg_pos %>% 
-    select(matches(" "))
-  merged_mg_pos_x <- merged_mg_pos  # Replicate df to add more cols
-  merged_mg_pos_x$RankMeans <- rowMeans(rank_data_mg_pos)  # Add RankMeans
-  merged_mg_pos_x$RankSD <- rowSds(as.matrix(rank_data_mg_pos))  # Add Variance of the rank scores
-  sorted_whole_mg_pos <- merged_mg_pos_x[order(merged_mg_pos_x$RankMeans),]  # Reorder df by RankMeans
-  top_mg_pos <- head(sorted_whole_mg_pos, as.numeric(top_cutoff))  # Head top 25
-  ## Same for neg
-  sub_mg_rank_files_neg <- id_rank_maker_neg(input_files_txt)
-  merged_mg_neg <- sub_mg_rank_files_neg %>% reduce(inner_join, by = "id")  # Merge all dfs by id
-  ## Add the mean of all exp ranks to each gene as a new column.
-  rank_data_mg_neg <- merged_mg_neg %>% 
-    select(matches(" "))
-  merged_mg_neg_x <- merged_mg_neg  # Replicate df to add more cols
-  merged_mg_neg_x$RankMeans <- rowMeans(rank_data_mg_neg)  # Add RankMeans
-  merged_mg_neg_x$RankSD <- rowSds(as.matrix(rank_data_mg_neg))  # Add Variance of the rank scores
-  sorted_whole_mg_neg <- merged_mg_neg_x[order(merged_mg_neg_x$RankMeans),]  # Reorder df by RankMeans
-  top_mg_neg <- head(sorted_whole_mg_neg, as.numeric(top_cutoff))  # Head top 25
   if (selection == "pos"){
+    ## Preparation for pos
+    sub_mg_rank_files_pos <- id_rank_maker_pos(input_files_txt)
+    merged_mg_pos <- sub_mg_rank_files_pos %>% reduce(inner_join, by = "id")  # Merge all dfs by id
+    ## Add the mean of all exp ranks to each gene as a new column.
+    rank_data_mg_pos <- select(merged_mg_pos, !matches("id"))
+    merged_mg_pos_x <- merged_mg_pos  # Replicate df to add more cols
+    merged_mg_pos_x$RankMeans <- rowMeans(rank_data_mg_pos)  # Add RankMeans
+    merged_mg_pos_x$RankSD <- rowSds(as.matrix(rank_data_mg_pos))  # Add Variance of the rank scores
+    sorted_whole_mg_pos <- merged_mg_pos_x[order(merged_mg_pos_x$RankMeans),]  # Reorder df by RankMeans
+    top_mg_pos <- head(sorted_whole_mg_pos, as.numeric(top_cutoff))  # Head top 25
     ## Preparation for LFC heatmap:
     ordered_vector_pos <- top_mg_pos$id  # Vector with the ordered list of genes (by RankMeans)
     ordered_LFC_heatmap_df_pos <- merged_mg_LFC[match(ordered_vector_pos, merged_mg_LFC$id),]  # Arranges LFCs df by vector
@@ -347,6 +333,16 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     #                       breaks=seq(1, nrow(sorted_whole_mg_pos), by=nrow(sorted_whole_mg_pos)-1))  # Legend scale from highest to lowest position in rank
     
   } else {
+    ## Preparation for neg
+    sub_mg_rank_files_neg <- id_rank_maker_neg(input_files_txt)
+    merged_mg_neg <- sub_mg_rank_files_neg %>% reduce(inner_join, by = "id")  # Merge all dfs by id
+    ## Add the mean of all exp ranks to each gene as a new column.
+    rank_data_mg_neg <- select(merged_mg_neg, !matches("id"))
+    merged_mg_neg_x <- merged_mg_neg  # Replicate df to add more cols
+    merged_mg_neg_x$RankMeans <- rowMeans(rank_data_mg_neg)  # Add RankMeans
+    merged_mg_neg_x$RankSD <- rowSds(as.matrix(rank_data_mg_neg))  # Add Variance of the rank scores
+    sorted_whole_mg_neg <- merged_mg_neg_x[order(merged_mg_neg_x$RankMeans),]  # Reorder df by RankMeans
+    top_mg_neg <- head(sorted_whole_mg_neg, as.numeric(top_cutoff))  # Head top 25
     ## Preparation for LFC heatmap:
     ordered_vector_neg <- top_mg_neg$id  # Vector with the ordered list of genes (by RankMeans)
     ordered_LFC_heatmap_df_neg <- merged_mg_LFC[match(ordered_vector_neg, merged_mg_LFC$id),]  # Arranges LFCs df by vector
@@ -397,7 +393,6 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     #                       name="", labels = c("Highest\nposition\nin rank", "Lowest\nposition\nin rank"),
     #                       breaks=seq(min(melted_mg_neg$value), max(melted_mg_neg$value),
     #                                  by=(max(melted_mg_neg$value)-min(melted_mg_neg$value))))  # Legend scale from highest to lowest position in rank
-    
   }
   
   # Save pos or neg
@@ -423,40 +418,43 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     merged_mg_LFC$LFCMeans <- rowMeans(LFC_data_mg)
     all_LFC <- data.frame(id = merged_mg_LFC$id, expLFCMeans = merged_mg_LFC$LFCMeans)
     
-    ## Control LFC plot for positive heatmap
-    simple_top_pos <- data.frame(id = top_mg_pos$id, rank = 1:length(top_mg_pos$id))
-    control_merge_pos <- merge(x=simple_top_pos, y=sub_control_mg , by = "id")
-    control_merge_pos <- merge(x=control_merge_pos, y=all_LFC , by = "id")
-    control_merge_pos <- control_merge_pos[order(control_merge_pos$rank),]
-    trial_plot_pos <- control_merge_pos %>% pivot_longer(cols = c(LFC, expLFCMeans), names_to = "lfcs")  #pivot plot
-    self_plot_pos <- ggplot(trial_plot_pos, aes(x = value, y = reorder(id, -rank), col = lfcs, group = lfcs))+
-      geom_point(size=1.75)+
-      scale_color_manual(values = c("coral2", "lightseagreen"))+
-      xlim(floor(min(trial_plot_pos$value)), max(trial_plot_pos$value))+
-      theme(text = element_text(size=12), legend.position = "none", panel.grid.major.y = element_line(colour="black"), 
-            panel.grid.major.x = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
-            axis.line.x = element_blank(), axis.line.y = element_blank(), axis.text.x= element_text(),
-            axis.ticks.x = element_line(), axis.ticks.y = element_blank(), axis.title.y = element_blank())+
-      xlab("LFC")+
-      geom_vline(xintercept=0, linetype="dashed", color = "red")
     
-    ## Control LFC plot for negative heatmap
-    simple_top_neg <- data.frame(id = top_mg_neg$id, rank = 1:length(top_mg_neg$id))
-    control_merge_neg <- merge(x=simple_top_neg, y=sub_control_mg , by = "id")
-    control_merge_neg <- merge(x=control_merge_neg, y=all_LFC , by = "id")
-    control_merge_neg <- control_merge_neg[order(control_merge_neg$rank),]
-    trial_plot_neg <- control_merge_neg %>% pivot_longer(cols = c(LFC, expLFCMeans), names_to = "lfcs")  #pivot plot
-    self_plot_neg <- ggplot(trial_plot_neg, aes(x = value, y = reorder(id, -rank), col = lfcs, group = lfcs))+
-      geom_point(size=1.75)+
-      scale_color_manual(values = c("coral2", "lightseagreen"))+
-      xlim(floor(min(trial_plot_neg$value)), max(trial_plot_neg$value))+
-      theme(text = element_text(size=12), legend.position = "none", panel.grid.major.y = element_line(colour="black"), 
-            panel.grid.major.x = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
-            axis.line.x = element_blank(), axis.line.y = element_blank(), axis.text.x= element_text(),
-            axis.ticks.x = element_line(), axis.ticks.y = element_blank(), axis.title.y = element_blank())+
-      xlab("LFC")+
-      geom_vline(xintercept=0, linetype="dashed", color = "red")
-    
+    if (selection == "pos"){
+      ## Control LFC plot for positive heatmap
+      simple_top_pos <- data.frame(id = top_mg_pos$id, rank = 1:length(top_mg_pos$id))
+      control_merge_pos <- merge(x=simple_top_pos, y=sub_control_mg , by = "id")
+      control_merge_pos <- merge(x=control_merge_pos, y=all_LFC , by = "id")
+      control_merge_pos <- control_merge_pos[order(control_merge_pos$rank),]
+      trial_plot_pos <- control_merge_pos %>% pivot_longer(cols = c(LFC, expLFCMeans), names_to = "lfcs")  #pivot plot
+      self_plot_pos <- ggplot(trial_plot_pos, aes(x = value, y = reorder(id, -rank), col = lfcs, group = lfcs))+
+        geom_point(size=1.75)+
+        scale_color_manual(values = c("coral2", "lightseagreen"))+
+        xlim(floor(min(trial_plot_pos$value)), max(trial_plot_pos$value))+
+        theme(text = element_text(size=12), legend.position = "none", panel.grid.major.y = element_line(colour="black"), 
+              panel.grid.major.x = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
+              axis.line.x = element_blank(), axis.line.y = element_blank(), axis.text.x= element_text(),
+              axis.ticks.x = element_line(), axis.ticks.y = element_blank(), axis.title.y = element_blank())+
+        xlab("LFC")+
+        geom_vline(xintercept=0, linetype="dashed", color = "red")
+    } else {
+      ## Control LFC plot for negative heatmap
+      simple_top_neg <- data.frame(id = top_mg_neg$id, rank = 1:length(top_mg_neg$id))
+      control_merge_neg <- merge(x=simple_top_neg, y=sub_control_mg , by = "id")
+      control_merge_neg <- merge(x=control_merge_neg, y=all_LFC , by = "id")
+      control_merge_neg <- control_merge_neg[order(control_merge_neg$rank),]
+      trial_plot_neg <- control_merge_neg %>% pivot_longer(cols = c(LFC, expLFCMeans), names_to = "lfcs")  #pivot plot
+      self_plot_neg <- ggplot(trial_plot_neg, aes(x = value, y = reorder(id, -rank), col = lfcs, group = lfcs))+
+        geom_point(size=1.75)+
+        scale_color_manual(values = c("coral2", "lightseagreen"))+
+        xlim(floor(min(trial_plot_neg$value)), max(trial_plot_neg$value))+
+        theme(text = element_text(size=12), legend.position = "none", panel.grid.major.y = element_line(colour="black"), 
+              panel.grid.major.x = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
+              axis.line.x = element_blank(), axis.line.y = element_blank(), axis.text.x= element_text(),
+              axis.ticks.x = element_line(), axis.ticks.y = element_blank(), axis.title.y = element_blank())+
+        xlab("LFC")+
+        geom_vline(xintercept=0, linetype="dashed", color = "red")
+    }
+
     # Save pos or neg
     if (selection == "pos"){
       suppressMessages(ggsave(path = output.directory, filename = paste0("self_enrichment_pos.", plot.format), plot = self_plot_pos, device = plot.format))
@@ -469,52 +467,53 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   
   ## REACTOME PATHWAY ANALYSIS
   suppressPackageStartupMessages(library(org.Hs.eg.db))  # Library is loaded here to avoid overlapping function errors
-  
-  #Reactome pos
-  perc_num_pos <- round(nrow(sorted_whole_mg_pos)*0.01)  # Obtain the top 1 %.
-  pre_go_pos <- head(sorted_whole_mg_pos, perc_num_pos)
-  go_genes_pos <- pre_go_pos$id
-  suppressMessages(go_pos <- select(org.Hs.eg.db,
-                                    keys = go_genes_pos,
-                                    columns=c("ENTREZID", "SYMBOL"),
-                                    keytype="SYMBOL"))
-  go_pos <- na.omit(go_pos)
-  pathways_pos <- enrichPathway(as.data.frame(go_pos)$ENTREZID, organism = "human", readable = TRUE)
-  pathways_pos@result$Description <- gsub("Homo sapiens\r: ", "", as.character(pathways_pos@result$Description))
-  pathways_pos@result <- pathways_pos@result[order(-pathways_pos@result$Count),]
-  pathways_pos_plot <- ggplot(head(pathways_pos@result,10), aes(x = 0, y = reorder(Description, Count)))+
-    geom_point(stat = "identity", aes(size=Count, colour=p.adjust))+
-    scale_size(range = c(4,13))+
-    theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
-          axis.line.x = element_line(color="black"), axis.text.x = element_blank(),
-          axis.ticks.x = element_blank())+
-    ylab("Pathway")+
-    xlab("Count")+
-    scale_color_distiller(palette = "RdPu", values = c(0, 0.25, 1))
-  #OrRd #RdPu #YlGn
-  
-  #Reactome neg
-  perc_num_neg <- round(nrow(sorted_whole_mg_neg)*0.01)  # Obtain the top 1 %.
-  pre_go_neg <- head(sorted_whole_mg_neg, perc_num_neg)
-  go_genes_neg <- pre_go_neg$id
-  suppressMessages(go_neg <- select(org.Hs.eg.db,
-                                    keys = go_genes_neg,
-                                    columns=c("ENTREZID", "SYMBOL"),
-                                    keytype="SYMBOL"))
-  go_neg <- na.omit(go_neg)
-  pathways_neg <- enrichPathway(as.data.frame(go_neg)$ENTREZID, organism = "human", readable = TRUE)
-  pathways_neg@result$Description <- gsub("Homo sapiens\r: ", "", as.character(pathways_neg@result$Description))
-  pathways_neg@result <- pathways_neg@result[order(-pathways_neg@result$Count),]
-  pathways_neg_plot <- ggplot(head(pathways_neg@result,10), aes(x = 0, y = reorder(Description, Count)))+
-    geom_point(stat = "identity", aes(size=Count, colour=p.adjust))+
-    scale_size(range = c(4,13))+
-    theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
-          axis.line.x = element_line(color="black"), axis.text.x = element_blank(),
-          axis.ticks.x = element_blank())+
-    ylab("Pathway")+
-    xlab("Count")+
-    scale_color_distiller(palette = "RdPu", values = c(0, 0.25, 1))
-  
+    
+  if (selection == "pos"){
+    #Reactome pos
+    perc_num_pos <- round(nrow(sorted_whole_mg_pos)*0.01)  # Obtain the top 1 %.
+    pre_go_pos <- head(sorted_whole_mg_pos, perc_num_pos)
+    go_genes_pos <- pre_go_pos$id
+    suppressMessages(go_pos <- select(org.Hs.eg.db,
+                                      keys = go_genes_pos,
+                                      columns=c("ENTREZID", "SYMBOL"),
+                                      keytype="SYMBOL"))
+    go_pos <- na.omit(go_pos)
+    pathways_pos <- enrichPathway(as.data.frame(go_pos)$ENTREZID, organism = "human", readable = TRUE)
+    pathways_pos@result$Description <- gsub("Homo sapiens\r: ", "", as.character(pathways_pos@result$Description))
+    pathways_pos@result <- pathways_pos@result[order(-pathways_pos@result$Count),]
+    pathways_pos_plot <- ggplot(head(pathways_pos@result,10), aes(x = 0, y = reorder(Description, Count)))+
+      geom_point(stat = "identity", aes(size=Count, colour=p.adjust))+
+      scale_size(range = c(4,13))+
+      theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
+            axis.line.x = element_line(color="black"), axis.text.x = element_blank(),
+            axis.ticks.x = element_blank())+
+      ylab("Pathway")+
+      xlab("Count")+
+      scale_color_distiller(palette = "RdPu", values = c(0, 0.25, 1))
+    #OrRd #RdPu #YlGn
+  } else {
+    #Reactome neg
+    perc_num_neg <- round(nrow(sorted_whole_mg_neg)*0.01)  # Obtain the top 1 %.
+    pre_go_neg <- head(sorted_whole_mg_neg, perc_num_neg)
+    go_genes_neg <- pre_go_neg$id
+    suppressMessages(go_neg <- select(org.Hs.eg.db,
+                                      keys = go_genes_neg,
+                                      columns=c("ENTREZID", "SYMBOL"),
+                                      keytype="SYMBOL"))
+    go_neg <- na.omit(go_neg)
+    pathways_neg <- enrichPathway(as.data.frame(go_neg)$ENTREZID, organism = "human", readable = TRUE)
+    pathways_neg@result$Description <- gsub("Homo sapiens\r: ", "", as.character(pathways_neg@result$Description))
+    pathways_neg@result <- pathways_neg@result[order(-pathways_neg@result$Count),]
+    pathways_neg_plot <- ggplot(head(pathways_neg@result,10), aes(x = 0, y = reorder(Description, Count)))+
+      geom_point(stat = "identity", aes(size=Count, colour=p.adjust))+
+      scale_size(range = c(4,13))+
+      theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
+            axis.line.x = element_line(color="black"), axis.text.x = element_blank(),
+            axis.ticks.x = element_blank())+
+      ylab("Pathway")+
+      xlab("Count")+
+      scale_color_distiller(palette = "RdPu", values = c(0, 0.25, 1))
+  }
   
   #Save pos or neg
   if(selection == "pos"){
