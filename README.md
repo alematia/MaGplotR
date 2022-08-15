@@ -116,5 +116,5 @@ Reactome PA of top 1 % hits<br/>
 
 
 #### Example of terminal display:<br/>
-![Screenshot from 2022-06-06 11-46-42](https://user-images.githubusercontent.com/95416488/172137707-6d300a97-5fb1-4e31-a77b-a8341b8790d4.png)
+![Terminal display](https://user-images.githubusercontent.com/95416488/184718368-b1056bc5-de78-4675-b00f-07475af99344.png)
 
