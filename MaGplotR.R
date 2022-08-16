@@ -327,7 +327,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
               axis.title.y = element_blank())+
         scale_fill_distiller(palette = "RdYlBu", direction = 1, name="LFC",
                              limits = c(-5, 10), labels=c("< -5", "0", "5", "> 10"),
-                             values = c(0, 0.25, 0.45,1))
+                             values = c(0, 0.25, 0.4,1))
     } else {
       heatmap_mg_pos <- ggplot(melted_LFC_pos, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
         geom_tile(colour="black", size=.2)+
@@ -379,7 +379,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
             axis.title.y = element_blank())+
       scale_fill_distiller(palette = "RdYlBu", direction = 1, name="LFC",
                            limits = c(-5, 10), labels=c("< -5", "0", "5", "> 10"),
-                           values = c(0, 0.25, 0.45,1))
+                           values = c(0, 0.25, 0.4,1))
     } else {
       heatmap_mg_neg <- ggplot(melted_LFC_neg, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
         geom_tile(colour="black", size=.2)+
