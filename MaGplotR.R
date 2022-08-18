@@ -486,9 +486,9 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   
   plot_ex <- ggplot(short_ex_table2, aes(x=variable, y=factor(Gene, level = rev(ordered_vector_ex)),
                                          size=value, colour = value > 0))+
-    geom_point()+
-    scale_size_continuous("Expression (nTPM)", range = c(1.5,5),
-                          limits = c(0, max(short_ex_table2$value)))+
+    geom_point(alpha=0.6, stroke = 1)+
+    scale_size_continuous("Expression (nTPM)", limits = c(0, max(short_ex_table2$value)), 
+                          range = c(1.5,5))+
     scale_colour_discrete("Expression > 0")+
     theme(panel.background = element_blank())+
     xlab("Cell line")+
