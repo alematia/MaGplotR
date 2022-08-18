@@ -494,7 +494,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     xlab("Cell line")+
     ylab("Gene")
   
-  suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("Expression_plot", plot.format), plot = plot_ex, device = plot.format))
+  suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("Expression_plot.", plot.format), plot = plot_ex, device = plot.format))
   print(str_glue("- Gene expression plot saved in output directory."))
   
   
