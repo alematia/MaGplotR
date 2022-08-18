@@ -106,6 +106,11 @@ Heatmap cells are filled with each gene LFC. Numbers inside the cells are gene r
 ![heatmap_and_control](https://user-images.githubusercontent.com/95416488/183723868-fd6a392e-33bc-4f70-abbe-5b03942470fe.png)
 
 
+### Expression plot<br/>
+![Expression_plot](https://user-images.githubusercontent.com/95416488/185506055-89ab1e5f-491a-478e-a8d9-33ba2f319674.png)
+
+
+
 #### Reactome Pathway Analysis<br/>
 Reactome PA of top 1 % hits<br/>
 ![ReactomePA_pos](https://user-images.githubusercontent.com/95416488/184412506-313baed1-7d76-47cd-b06b-5dc7544702db.png)
