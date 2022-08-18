@@ -472,6 +472,34 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     }
   }
   
+  
+  ## Gene Expression
+  ex_table <- read.delim("./proteinatlas_gene_ex.tsv", check.names = F) ##### Give path to file
+  if (selection == "pos") {
+    ordered_ex_table <- na.omit(ex_table[match(ordered_vector_pos, ex_table$Gene),])
+  } else {
+    ordered_ex_table <- na.omit(ex_table[match(ordered_vector_neg, ex_table$Gene),])
+  }
+  short_ex_table <- ordered_ex_table[,c("Gene", "A-431", "A549", "Daudi", "HAP1", "HEK 293", "HeLa", "JURKAT", "K-562")]
+  short_ex_table2 <- melt(short_ex_table,id.vars = "Gene")
+  ordered_vector_ex <- short_ex_table$Gene
+  
+  plot_ex <- ggplot(short_ex_table2, aes(x=variable, y=factor(Gene, level = rev(ordered_vector_ex)),
+                                         size=value, colour = value > 0))+
+    geom_point()+
+    scale_size_continuous("Expression (nTPM)", range = c(1.5,5),
+                          limits = c(0, max(short_ex_table2$value)))+
+    scale_colour_discrete("Expression > 0")+
+    theme(panel.background = element_blank())+
+    xlab("Cell line")+
+    ylab("Gene")
+  
+  suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("Expression_plot", plot.format), plot = plot_ex, device = plot.format))
+  print(str_glue("- Gene expression plot saved in output directory."))
+  
+  
+  
+  
   ## REACTOME PATHWAY ANALYSIS
   suppressPackageStartupMessages(library(org.Hs.eg.db))  # Library is loaded here to avoid overlapping function errors
   
