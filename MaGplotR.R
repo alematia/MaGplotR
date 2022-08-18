@@ -269,22 +269,28 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   ## 1. Boxplot with control if supplied
   if (is.null(control_file)){
     boxplot <- ggplot(bound, aes(variable, y = LFC))+
-      geom_boxplot(aes(colour=variable), outlier.shape = NA)+
+      geom_boxplot(aes(colour=variable),
+                   outlier.shape = 1, outlier.size = .75, outlier.stroke = 0.75)+
       geom_jitter(position = position_jitter(width = 0.25) , size = 0.005, alpha = 0.05, aes(colour=variable))+
       xlab("Test experiments")+
       ylab("Genes Log2 Fold Change (LFC)")+
-      theme(legend.position = "None", axis.text.x = element_text(size = 10, angle = 45, hjust = 1))
+      theme(legend.position = "None", axis.text.x = element_text(size = 10, angle = 45, hjust = 1),
+            panel.background = element_blank(), axis.line = element_line(),
+            panel.grid.minor.y = element_line(colour = "grey"))
   } else {
     sub_control_mg <- data.frame(id = control_file$id, LFC = control_file$pos.lfc)
     sub_control_mg2 <- data.frame(Control = control_file$id, LFC = control_file$pos.lfc)
     melted_control_mg <- reshape2::melt(sub_control_mg2, id.vars = 2)
     all_data_boxplot_mg <- bind_rows(bound, melted_control_mg)
     boxplot <- ggplot(all_data_boxplot_mg, aes(variable, y= LFC))+
-      geom_boxplot(aes(colour=variable), outlier.shape = NA)+
-      geom_jitter(position = position_jitter(width = 0.25) , size=0.005, alpha = 0.05, aes(colour=variable))+
+      geom_boxplot(aes(colour=variable),
+                   outlier.shape = 1, outlier.size = .75, outlier.stroke = 0.75)+
+      geom_jitter(position = position_jitter(width = 0.25) , size = 0.005, alpha = 0.05, aes(colour=variable))+
       xlab("Test experiments")+
       ylab("Genes Log2 Fold Change (LFC)")+
-      theme(legend.position = "None", axis.text.x = element_text(size = 10, angle = 45, hjust = 1))
+      theme(legend.position = "None", axis.text.x = element_text(size = 10, angle = 45, hjust = 1),
+            panel.background = element_blank(), axis.line = element_line(),
+            panel.grid.minor.y = element_line(colour = "grey"))
   }
   suppressMessages(ggsave(path = output.directory, filename = paste0("genes_boxplot.", plot.format), plot = boxplot, device = plot.format))
   print(str_glue("- Genes boxplot saved in output directory."))
@@ -347,7 +353,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     #scale_fill_distiller(palette = 4, direction = 1, name="LFC",
     #                     limits = c(min(melted_LFC$value), max(melted_LFC$value)))
     #scale_fill_distiller(palette = 5, limits = c(min(melted_LFC$value)-2, max(melted_LFC$value)+2), direction = 1)
-   } else {
+  } else {
     ## Preparation for neg
     sub_mg_rank_files_neg <- id_rank_maker_neg(input_files_txt)
     merged_mg_neg <- sub_mg_rank_files_neg %>% reduce(inner_join, by = "id")  # Merge all dfs by id
@@ -368,18 +374,18 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     melted_LFC_neg$value[melted_LFC_neg$value > 10] <- 10  # All LFCs above 10 are now 10.
     melted_LFC_neg$value[melted_LFC_neg$value < -5] <- -5  # All LFCs below -5 are now -5.
     if (col_blind == "y"){
-    heatmap_mg_neg <- ggplot(melted_LFC_neg, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
-      geom_tile(colour="black", size=.2)+
-      ggtitle("Gene LFC")+
-      geom_text(size=1.5, aes(label = round(melted_mg_neg$value, 1)))+
-      theme(panel.background = element_blank(),
-            legend.position = "left",
-            axis.text.x = element_text(angle = 45, hjust = 1),
-            axis.title.x = element_blank(),
-            axis.title.y = element_blank())+
-      scale_fill_distiller(palette = "RdYlBu", direction = 1, name="LFC",
-                           limits = c(-5, 10), labels=c("< -5", "0", "5", "> 10"),
-                           values = c(0, 0.25, 0.4,1))
+      heatmap_mg_neg <- ggplot(melted_LFC_neg, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
+        geom_tile(colour="black", size=.2)+
+        ggtitle("Gene LFC")+
+        geom_text(size=1.5, aes(label = round(melted_mg_neg$value, 1)))+
+        theme(panel.background = element_blank(),
+              legend.position = "left",
+              axis.text.x = element_text(angle = 45, hjust = 1),
+              axis.title.x = element_blank(),
+              axis.title.y = element_blank())+
+        scale_fill_distiller(palette = "RdYlBu", direction = 1, name="LFC",
+                             limits = c(-5, 10), labels=c("< -5", "0", "5", "> 10"),
+                             values = c(0, 0.25, 0.4,1))
     } else {
       heatmap_mg_neg <- ggplot(melted_LFC_neg, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
         geom_tile(colour="black", size=.2)+
@@ -455,7 +461,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
         xlab("LFC")+
         geom_vline(xintercept=0, linetype="dashed", color = "red")
     }
-
+    
     # Save pos or neg
     if (selection == "pos"){
       suppressMessages(ggsave(path = output.directory, filename = paste0("self_enrichment_pos.", plot.format), plot = self_plot_pos, device = plot.format))
@@ -468,7 +474,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   
   ## REACTOME PATHWAY ANALYSIS
   suppressPackageStartupMessages(library(org.Hs.eg.db))  # Library is loaded here to avoid overlapping function errors
-    
+  
   if (selection == "pos"){
     # Reactome pos
     perc_num_pos <- round(nrow(sorted_whole_mg_pos)*0.01)  # Obtain the top 1 %.
