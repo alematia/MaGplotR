@@ -105,8 +105,11 @@ Representation of all gene LFCs in each experiment (and control if supplied). Gi
 Heatmap cells are filled with each gene LFC. Numbers inside the cells are gene ranks in each experiment. Control plot shows the LFC of control (cyan) and the mean LFC of all experiments (red) for each gene.<br/>
 ![heatmap_and_control](https://user-images.githubusercontent.com/95416488/183723868-fd6a392e-33bc-4f70-abbe-5b03942470fe.png)
 
+#### Colorblind heatmap
+![heatmap_control_colorblind](https://user-images.githubusercontent.com/95416488/185508941-e0138719-31c9-403f-bcc6-1782e22fef2d.png)
 
-### Expression plot<br/>
+
+#### Expression plot<br/>
 ![Expression_plot](https://user-images.githubusercontent.com/95416488/185507637-0a976aa7-79de-4bbf-bab0-ce46220ee6e8.png)
 
 
