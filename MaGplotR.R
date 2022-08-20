@@ -1,5 +1,5 @@
 ## Welcome to MaGplotR
-
+  
 options(warn=-1)
 
 ## Load libraries
@@ -166,7 +166,7 @@ if(!is.null(opt$colour.blind)){
 
 # Read MaGeCK files
 setwd(input_dir_path)  # Set wd to read gene summary files.
-MaGeCK_files = list.files(pattern="*.txt")
+MaGeCK_files <- list.files(pattern="*.txt")
 input_files_txt = lapply(MaGeCK_files, read.delim)
 print(str_glue("- MaGeCK gene summary data detected."))
 setwd(first_dir)
@@ -177,6 +177,8 @@ if(is.na(opt$control.file)){
   control_file <- read.delim(file.path(control_file_path))
   print(str_glue("- Control file detected."))
 }
+
+
 
 
 # Read sgRNA summary files.
@@ -472,32 +474,41 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     }
   }
   
-  
   ## Gene Expression
-  ex_table <- read.delim("./proteinatlas_gene_ex.tsv", check.names = F) ##### Give path to file
-  if (selection == "pos") {
-    ordered_ex_table <- na.omit(ex_table[match(ordered_vector_pos, ex_table$Gene),])
+  ## Tries to find expression file in current dir, home and Downloads. If found, proceed.
+  if (file.exists("./MaGplotR/proteinatlas_gene_ex.tsv") == TRUE){
+    ex_table <- read.delim("./MaGplotR/proteinatlas_gene_ex.tsv", check.names = F) ##### Give path to file
+  } else if (file.exists("~/MaGplotR/proteinatlas_gene_ex.tsv") == TRUE) {
+    ex_table <- read.delim("~/MaGplotR/proteinatlas_gene_ex.tsv", check.names = F)
+  } else if (file.exists("~/Downloads/MaGplotR/proteinatlas_gene_ex.tsv") == TRUE) {
+    ex_table <- read.delim("~/Downloads/MaGplotR/proteinatlas_gene_ex.tsv", check.names = F)
   } else {
-    ordered_ex_table <- na.omit(ex_table[match(ordered_vector_neg, ex_table$Gene),])
+    print(str_glue("- Gene expression file not found"))
   }
-  short_ex_table <- ordered_ex_table[,c("Gene", "A-431", "A549", "Daudi", "HAP1", "HEK 293", "HeLa", "JURKAT", "K-562")]
-  short_ex_table2 <- melt(short_ex_table,id.vars = "Gene")
-  ordered_vector_ex <- short_ex_table$Gene
-  
-  plot_ex <- ggplot(short_ex_table2, aes(x=variable, y=factor(Gene, level = rev(ordered_vector_ex)),
-                                         size=value, colour = value > 0))+
-    geom_point(alpha=0.6, stroke = 1)+
-    scale_size_continuous("Expression (nTPM)", limits = c(0, max(short_ex_table2$value)), 
-                          range = c(1.5,5))+
-    scale_colour_discrete("Expression > 0")+
-    theme(panel.background = element_blank())+
-    xlab("Cell line")+
-    ylab("Gene")
-  
-  suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("Expression_plot.", plot.format), plot = plot_ex, device = plot.format))
-  print(str_glue("- Gene expression plot saved in output directory."))
-  
-  
+  ## If file is found, variable is created and then creates the plot.
+  if (exists("ex_table")){
+    if (selection == "pos") {
+      ordered_ex_table <- na.omit(ex_table[match(ordered_vector_pos, ex_table$Gene),])
+    } else {
+      ordered_ex_table <- na.omit(ex_table[match(ordered_vector_neg, ex_table$Gene),])
+    }
+    short_ex_table <- ordered_ex_table[,c("Gene", "A-431", "A549", "Daudi", "HAP1", "HEK 293", "HeLa", "JURKAT", "K-562")]
+    short_ex_table2 <- melt(short_ex_table,id.vars = "Gene")
+    ordered_vector_ex <- short_ex_table$Gene
+    
+    plot_ex <- ggplot(short_ex_table2, aes(x=variable, y=factor(Gene, level = rev(ordered_vector_ex)),
+                                           size=value, colour = value > 0))+
+      geom_point(alpha=0.6, stroke = 1)+
+      scale_size_continuous("Expression (nTPM)", limits = c(0, max(short_ex_table2$value)), 
+                            range = c(1.5,5))+
+      scale_colour_discrete("Expression > 0")+
+      theme(panel.background = element_blank())+
+      xlab("Cell line")+
+      ylab("Gene")
+    
+    suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("Expression_plot.", plot.format), plot = plot_ex, device = plot.format))
+    print(str_glue("- Gene expression plot saved in output directory."))
+  }
   
   
   ## REACTOME PATHWAY ANALYSIS
