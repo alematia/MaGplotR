@@ -294,8 +294,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
             panel.background = element_blank(), axis.line = element_line(),
             panel.grid.minor.y = element_line(colour = "grey"))
   }
-  suppressMessages(ggsave(path = output.directory, filename = paste0("genes_boxplot.", plot.format),
-                          plot = boxplot, device = plot.format))
+  suppressMessages(ggsave(path = output.directory, filename = paste0("genes_boxplot.", plot.format), plot = boxplot, device = plot.format))
   print(str_glue("- Genes boxplot saved in output directory."))
   
   ## 2. Heatmaps + record csv files (pos and neg).
@@ -500,11 +499,11 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     ordered_vector_ex <- short_ex_table$Gene
     
     plot_ex <- ggplot(short_ex_table2, aes(x=variable, y=factor(Gene, level = rev(ordered_vector_ex)),
-                                           size=value, colour = value > 0))+
+                                           size=value, color=ifelse(value == 0, "0","> 0")))+
       geom_point(alpha=0.6, stroke = 1)+
       scale_size_continuous("Expression (nTPM)", limits = c(0, max(short_ex_table2$value)), 
                             range = c(1.5,5))+
-      scale_colour_discrete("Expression > 0")+
+      scale_colour_discrete("Expression")+
       theme(panel.background = element_blank())+
       xlab("Cell line")+
       ylab("Gene")
