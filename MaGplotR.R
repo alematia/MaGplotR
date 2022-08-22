@@ -422,11 +422,9 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     control_file <- NULL
   } else {
     ## Add the mean of all exp LFCs to each gene as a new column.
-    LFC_data_mg <- merged_mg_LFC %>% 
-      select(matches(" "))
+    LFC_data_mg <- select(merged_mg_LFC, !matches("id"))
     merged_mg_LFC$LFCMeans <- rowMeans(LFC_data_mg)
     all_LFC <- data.frame(id = merged_mg_LFC$id, expLFCMeans = merged_mg_LFC$LFCMeans)
-    
     
     if (selection == "pos"){
       ## Control LFC plot for positive heatmap
