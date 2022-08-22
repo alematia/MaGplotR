@@ -110,7 +110,7 @@ Heatmap cells are filled with each gene LFC. Numbers inside the cells are gene r
 
 
 #### Expression plot<br/>
-![Expression_plot](https://user-images.githubusercontent.com/95416488/185507637-0a976aa7-79de-4bbf-bab0-ce46220ee6e8.png)
+![Expression_plot](https://user-images.githubusercontent.com/95416488/185993309-a5050d94-980a-4534-83b4-c26d2946fc78.png)
 
 
 
