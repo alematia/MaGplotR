@@ -294,7 +294,8 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
             panel.background = element_blank(), axis.line = element_line(),
             panel.grid.minor.y = element_line(colour = "grey"))
   }
-  suppressMessages(ggsave(path = output.directory, filename = paste0("genes_boxplot.", plot.format), plot = boxplot, device = plot.format))
+  suppressMessages(ggsave(path = output.directory, filename = paste0("genes_boxplot.", plot.format),
+                          plot = boxplot, device = plot.format))
   print(str_glue("- Genes boxplot saved in output directory."))
   
   ## 2. Heatmaps + record csv files (pos and neg).
@@ -408,12 +409,14 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   if (selection == "pos"){
     write.csv(sorted_whole_mg_pos, paste0(output.directory, "/MaGeCK_ranked_genes_pos.csv"), row.names = FALSE)
     print(str_glue("- Positive selection ranked genes (.csv file) saved in output directory."))
-    suppressMessages(ggsave(path = output.directory, filename = paste0("heatmap_mageck_pos.", plot.format), plot = heatmap_mg_pos, device = plot.format))
+    suppressMessages(ggsave(path = output.directory, filename = paste0("heatmap_mageck_pos.", plot.format),
+                            plot = heatmap_mg_pos, device = plot.format))
     print(str_glue("- Heatmap (positive selection) saved in output directory."))
   } else {
     write.csv(sorted_whole_mg_neg, paste0(output.directory, "/MaGeCK_ranked_genes_neg.csv"), row.names = FALSE)
     print(str_glue("- Negative selection ranked genes (.csv file) saved in output directory."))
-    suppressMessages(ggsave(path = output.directory, filename = paste0("heatmap_mageck_neg.", plot.format), plot = heatmap_mg_neg, device = plot.format))
+    suppressMessages(ggsave(path = output.directory, filename = paste0("heatmap_mageck_neg.", plot.format),
+                            plot = heatmap_mg_neg, device = plot.format))
     print(str_glue("- Heatmap (negative selection) saved in output directory."))
   }
   
@@ -464,10 +467,12 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     
     # Save pos or neg
     if (selection == "pos"){
-      suppressMessages(ggsave(path = output.directory, filename = paste0("self_enrichment_pos.", plot.format), plot = self_plot_pos, device = plot.format))
+      suppressMessages(ggsave(path = output.directory, filename = paste0("self_enrichment_pos.", plot.format),
+                              plot = self_plot_pos, device = plot.format))
       print(str_glue("- Self enrichment plot (positive selection) saved in output directory."))
     } else {
-      suppressMessages(ggsave(path = output.directory, filename = paste0("self_enrichment_neg.", plot.format), plot = self_plot_neg, device = plot.format))
+      suppressMessages(ggsave(path = output.directory, filename = paste0("self_enrichment_neg.", plot.format),
+                              plot = self_plot_neg, device = plot.format))
       print(str_glue("- Self enrichment plot (negative selection) saved in output directory."))
     }
   }
@@ -504,7 +509,8 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
       xlab("Cell line")+
       ylab("Gene")
     
-    suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("Expression_plot.", plot.format), plot = plot_ex, device = plot.format))
+    suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("Expression_plot.", plot.format),
+                            plot = plot_ex, device = plot.format))
     print(str_glue("- Gene expression plot saved in output directory."))
   }
   
@@ -561,7 +567,8 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   
   # Save pos or neg
   if(selection == "pos"){
-    suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("ReactomePA_pos.", plot.format), plot = pathways_pos_plot, device = plot.format))
+    suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("ReactomePA_pos.", plot.format),
+                            plot = pathways_pos_plot, device = plot.format))
     write.csv(pathways_pos@result, paste0(output.directory, "/ReactomePA_pos.csv"), row.names = FALSE)
     # Print most enriched pathway and genes.
     ids_vector <- str_split(pathways_pos@result[pathways_pos@result[1,1], "geneID"], "/")[[1]]
@@ -570,7 +577,8 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
       "- Most enriched pathway (pos) is: '", pathways_pos@result[pathways_pos@result[1,1], "Description"], "' with genes: ", names_str, ".")
     )
   } else {
-    suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("ReactomePA_neg.", plot.format), plot = pathways_neg_plot, device = plot.format))
+    suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("ReactomePA_neg.", plot.format),
+                            plot = pathways_neg_plot, device = plot.format))
     write.csv(pathways_neg@result, paste0(output.directory, "/ReactomePA_neg.csv"), row.names = FALSE)
     # Print most enriched pathway and genes.
     ids_vector <- str_split(pathways_neg@result[pathways_neg@result[1,1], "geneID"], "/")[[1]]
@@ -580,111 +588,116 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     )
   }
   print(str_glue("- Reactome Pathway Analysis completed."))
-  
-  #### CLUSTERING by clusterProfiler. Top 1 %
-  # Pos or neg
-  if (selection == "pos"){
-    num <- 1
-    for (i in input_files_txt){
-      input_files_txt[[num]] <- head(input_files_txt[[num]], perc_num_pos)
-      num <- num + 1
-    }
-    # Select just gene ids
-    num <- 1
-    for (i in input_files_txt){
-      input_files_txt[[num]] <- input_files_txt[[num]]$id
-      num <- num + 1
-    }
-    # Annotation
-    num <- 1
-    sym_ids_vector <- c()
-    library(org.Hs.eg.db)
-    print(str_glue("- Clustering in progress..."))
-    for (i in input_files_txt){
-      suppressMessages(sym_ids_vector[[num]] <- select(org.Hs.eg.db,
-                                                       keys = input_files_txt[[num]],
-                                                       columns=c("ENTREZID", "SYMBOL"),
-                                                       keytype="SYMBOL"))
-      num <- num + 1
-    }
-    # Select ENTREZID
-    num <- 1
-    for (i in sym_ids_vector){
-      sym_ids_vector[[num]] <- sym_ids_vector[[num]]$ENTREZID
-      num <- num + 1
-    }
-    # Rename vector indexes
-    num <- 1
-    for (i in sym_ids_vector){
-      names(sym_ids_vector)[[num]] <- num
-      num <- num + 1
-    }
-    # Create the object
-    cluster_pos <- compareCluster(geneClusters = sym_ids_vector, fun = "enrichPathway")
-    if (!is.null(cluster_pos)){
-      cluster_pos@compareClusterResult$Description <- gsub("Homo sapiens\r: ", "", as.character(cluster_pos@compareClusterResult$Description))
-      cluster_pos@keytype <- "enrichPathway"
-      cluster_pos@readable <- FALSE
-      cluster_pos_readable <- setReadable(cluster_pos, OrgDb = org.Hs.eg.db, keyType="ENTREZID")
-      suppressMessages(ggsave(height=32, width=32, units=c("cm"), path = output.directory, filename = "cluster.pdf", plot = suppressMessages(cnetplot(cluster_pos_readable)), device = "pdf"))
-      print(str_glue("- Clustering completed."))
+
+  ## Clustering if > 2 exps.
+  if (length(MaGeCK_files) > 2) {
+    #### CLUSTERING by clusterProfiler. Top 1 %
+    # Pos or neg
+    if (selection == "pos"){
+      num <- 1
+      for (i in input_files_txt){
+        input_files_txt[[num]] <- head(input_files_txt[[num]], perc_num_pos)
+        num <- num + 1
+      }
+      # Select just gene ids
+      num <- 1
+      for (i in input_files_txt){
+        input_files_txt[[num]] <- input_files_txt[[num]]$id
+        num <- num + 1
+      }
+      # Annotation
+      num <- 1
+      sym_ids_vector <- c()
+      library(org.Hs.eg.db)
+      print(str_glue("- Clustering in progress..."))
+      for (i in input_files_txt){
+        suppressMessages(sym_ids_vector[[num]] <- select(org.Hs.eg.db,
+                                                         keys = input_files_txt[[num]],
+                                                         columns=c("ENTREZID", "SYMBOL"),
+                                                         keytype="SYMBOL"))
+        num <- num + 1
+      }
+      # Select ENTREZID
+      num <- 1
+      for (i in sym_ids_vector){
+        sym_ids_vector[[num]] <- sym_ids_vector[[num]]$ENTREZID
+        num <- num + 1
+      }
+      # Rename vector indexes
+      num <- 1
+      for (i in sym_ids_vector){
+        names(sym_ids_vector)[[num]] <- num
+        num <- num + 1
+      }
+      # Create the object
+      cluster_pos <- compareCluster(geneClusters = sym_ids_vector, fun = "enrichPathway")
+      if (!is.null(cluster_pos)){
+        cluster_pos@compareClusterResult$Description <- gsub("Homo sapiens\r: ", "", as.character(cluster_pos@compareClusterResult$Description))
+        cluster_pos@keytype <- "enrichPathway"
+        cluster_pos@readable <- FALSE
+        cluster_pos_readable <- setReadable(cluster_pos, OrgDb = org.Hs.eg.db, keyType="ENTREZID")
+        suppressMessages(ggsave(height=32, width=32, units=c("cm"), path = output.directory, filename = "cluster.pdf",
+                                plot = suppressMessages(cnetplot(cluster_pos_readable)), device = "pdf"))
+        print(str_glue("- Clustering completed."))
+      } else {
+        print(str_glue("- No clusters found."))
+      }
+      detach("package:org.Hs.eg.db", unload=TRUE)
     } else {
-      print(str_glue("- No clusters found."))
+      # neg
+      num <- 1
+      for (i in input_files_txt){
+        input_files_txt[[num]] <- input_files_txt[[num]][order(input_files_txt[[num]]$neg.rank),]
+        input_files_txt[[num]] <- head(input_files_txt[[num]], perc_num_neg)
+        num <- num + 1
+      }
+      # Select just gene ids
+      num <- 1
+      for (i in input_files_txt){
+        input_files_txt[[num]] <- input_files_txt[[num]]$id
+        num <- num + 1
+      }
+      # Annotation
+      num <- 1
+      sym_ids_vector <- c()
+      library(org.Hs.eg.db)
+      print(str_glue("- Clustering in progress..."))
+      for (i in input_files_txt){
+        suppressMessages(sym_ids_vector[[num]] <- select(org.Hs.eg.db,
+                                                         keys = input_files_txt[[num]],
+                                                         columns=c("ENTREZID", "SYMBOL"),
+                                                         keytype="SYMBOL"))
+        num <- num + 1
+      }
+      # Select ENTREZID
+      num <- 1
+      for (i in sym_ids_vector){
+        sym_ids_vector[[num]] <- sym_ids_vector[[num]]$ENTREZID
+        num <- num + 1
+      }
+      # Rename vector indexes
+      num <- 1
+      for (i in sym_ids_vector){
+        names(sym_ids_vector)[[num]] <- num
+        num <- num + 1
+      }
+      # Create the object
+      cluster_neg <- compareCluster(geneClusters = sym_ids_vector, fun = "enrichPathway")
+      if (!is.null(cluster_neg)){
+        cluster_neg@compareClusterResult$Description <- gsub("Homo sapiens\r: ", "", as.character(cluster_neg@compareClusterResult$Description))
+        cluster_neg@keytype <- "enrichPathway"
+        cluster_neg@readable <- FALSE
+        cluster_neg_readable <- setReadable(cluster_neg, OrgDb = org.Hs.eg.db, keyType="ENTREZID")
+        suppressMessages(ggsave(height=32, width=32, units=c("cm"), path = output.directory,
+                                filename = "cluster.pdf", plot = suppressMessages(cnetplot(cluster_neg_readable)), device = "pdf"))
+        print(str_glue("- Clustering completed."))
+      } else {
+        print(str_glue("- No clusters found."))
+      }
+      detach("package:org.Hs.eg.db", unload=TRUE)
     }
-    detach("package:org.Hs.eg.db", unload=TRUE)
-  } else {
-    # neg
-    num <- 1
-    for (i in input_files_txt){
-      input_files_txt[[num]] <- input_files_txt[[num]][order(input_files_txt[[num]]$neg.rank),]
-      input_files_txt[[num]] <- head(input_files_txt[[num]], perc_num_neg)
-      num <- num + 1
-    }
-    # Select just gene ids
-    num <- 1
-    for (i in input_files_txt){
-      input_files_txt[[num]] <- input_files_txt[[num]]$id
-      num <- num + 1
-    }
-    # Annotation
-    num <- 1
-    sym_ids_vector <- c()
-    library(org.Hs.eg.db)
-    print(str_glue("- Clustering in progress..."))
-    for (i in input_files_txt){
-      suppressMessages(sym_ids_vector[[num]] <- select(org.Hs.eg.db,
-                                                       keys = input_files_txt[[num]],
-                                                       columns=c("ENTREZID", "SYMBOL"),
-                                                       keytype="SYMBOL"))
-      num <- num + 1
-    }
-    # Select ENTREZID
-    num <- 1
-    for (i in sym_ids_vector){
-      sym_ids_vector[[num]] <- sym_ids_vector[[num]]$ENTREZID
-      num <- num + 1
-    }
-    # Rename vector indexes
-    num <- 1
-    for (i in sym_ids_vector){
-      names(sym_ids_vector)[[num]] <- num
-      num <- num + 1
-    }
-    # Create the object
-    cluster_neg <- compareCluster(geneClusters = sym_ids_vector, fun = "enrichPathway")
-    if (!is.null(cluster_neg)){
-      cluster_neg@compareClusterResult$Description <- gsub("Homo sapiens\r: ", "", as.character(cluster_neg@compareClusterResult$Description))
-      cluster_neg@keytype <- "enrichPathway"
-      cluster_neg@readable <- FALSE
-      cluster_neg_readable <- setReadable(cluster_neg, OrgDb = org.Hs.eg.db, keyType="ENTREZID")
-      suppressMessages(ggsave(height=32, width=32, units=c("cm"), path = output.directory, filename = "cluster.pdf", plot = suppressMessages(cnetplot(cluster_neg_readable)), device = "pdf"))
-      print(str_glue("- Clustering completed."))
-    } else {
-      print(str_glue("- No clusters found."))
-    }
-    detach("package:org.Hs.eg.db", unload=TRUE)
+    #### End of clustering
   }
-  ####
   
   
   # GO ENRICHMENT ANALYSIS - only if user chooses
