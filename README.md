@@ -70,10 +70,11 @@ sudo apt install libxml2-dev
 
 ## Usage
 #### Recommendations:
-1) Clone or download the repository and put the MaGplotR folder either in your Downloads or your Home directory.
-2) Put all the gene summary files you want to analyze in a designated folder. Do not put your control file in this folder. This will be the input directory (-i). These files names usually end with ".gene_summary.txt" as MaGeCK output. MaGplotR uses the experiment name from the filename (i.e. for "exp7.gene_summary.txt" file, "exp7" will be displayed in the plots).<br/>
-3) For simplicity, we recommend you to put the input folder, the control file, and the output folder (optionally create it first) in the MaGplotR folder where the program files are stored.
-4) Next, open a terminal in Linux or MacOS and type the comands as in the examples. Make sure you give the path to the file/folder as argument, either the complete path, or from current directory: ```./input_directory/``` . You can also provide an output folder, where files will be saved, otherwise, input directory is default.
+1) Install R and its dependencies as shown above.<br/>
+2) Clone or download the repository and put the MaGplotR folder either in your Downloads or your Home directory.<br/>
+3) Put all the gene summary files you want to analyze in a designated folder. Do not put your control file in this folder. This will be the input directory (-i). These files names usually end with ".gene_summary.txt" as MaGeCK output. MaGplotR uses the experiment name from the filename (i.e. for "exp7.gene_summary.txt" file, "exp7" will be displayed in the plots).<br/>
+4) For simplicity, we recommend you to put the input folder, the control file, and the output folder (optionally create it first) in the MaGplotR folder where the program files are stored.<br/>
+5) Next, open a terminal in Linux or MacOS and type the comands as in the examples. Make sure you give the path to the file/folder as argument, either the complete path, or from current directory: ```./input_directory/``` . You can also provide an output folder, where files will be saved, otherwise, input directory is default.
 <br/>
 
 Examples:
