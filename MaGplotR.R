@@ -320,8 +320,8 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     melted_LFC_pos <- melt(ordered_LFC_heatmap_df_pos,id.vars = c("id", "RankMeans"))  # Preparation for heatmap
     melted_mg_pos <- melt(top_mg_pos,id.vars = c("id", "RankMeans", "RankSD"))  # Preparation for heatmap
     ## Set limits to LFCs. All above 10 and below -5 is considered as max and min respectively.
-    melted_LFC_pos$value[melted_LFC_pos$value > 10] <- 10  # All LFCs above 10 are now 10.
-    melted_LFC_pos$value[melted_LFC_pos$value < -5] <- -5  # All LFCs below -5 are now -5.
+    melted_LFC_pos$value[melted_LFC_pos$value > 8] <- 8  # All LFCs above 10 are now 10.
+    melted_LFC_pos$value[melted_LFC_pos$value < -4] <- -4  # All LFCs below -5 are now -5.
     
     if (col_blind == "y"){
       heatmap_mg_pos <- ggplot(melted_LFC_pos, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
@@ -334,7 +334,8 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
               axis.title.x = element_blank(),
               axis.title.y = element_blank())+
         scale_fill_distiller(palette = "RdYlBu", direction = 1, name="LFC",
-                             limits = c(-5, 10), labels=c("< -5", "0", "5", "> 10"),
+                             limits = c(-4, 8), labels=c("< -4", "0", "4", "> 8"),
+                             breaks = c(-4, 0, 4, 8),
                              values = c(0, 0.25, 0.4,1))
     } else {
       heatmap_mg_pos <- ggplot(melted_LFC_pos, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
@@ -347,8 +348,9 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
               axis.title.x = element_blank(),
               axis.title.y = element_blank())+
         scale_fill_distiller(palette = "RdYlGn", direction = 1, name="LFC",
-                             limits = c(-5, 10), labels=c("< -5", "0", "5", "> 10"),
-                             values = c(0, 0.25, 0.45,1))
+                             limits = c(-4, 8), labels=c("< -4", "0", "4", "> 8"),
+                             breaks = c(-4, 0, 4, 8),
+                             values = c(0, 0.25, 0.45, 1))
     }
     #scale_fill_distiller(palette = "YlGn", direction = 1, name="LFC",
     #                    limits = c(-5, 10), labels=c("< -5", "0", "5", "> 10"))
@@ -386,7 +388,8 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
               axis.title.x = element_blank(),
               axis.title.y = element_blank())+
         scale_fill_distiller(palette = "RdYlBu", direction = 1, name="LFC",
-                             limits = c(-5, 10), labels=c("< -5", "0", "5", "> 10"),
+                             limits = c(-4, 8), labels=c("< -4", "0", "4", "> 8"),
+                             breaks = c(-4, 0, 4, 8),
                              values = c(0, 0.25, 0.4,1))
     } else {
       heatmap_mg_neg <- ggplot(melted_LFC_neg, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
@@ -399,8 +402,9 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
               axis.title.x = element_blank(),
               axis.title.y = element_blank())+
         scale_fill_distiller(palette = "RdYlGn", direction = 1, name="LFC",
-                             limits = c(-5, 10), labels=c("< -5", "0", "5", "> 10"),
-                             values = c(0, 0.25, 0.45,1))
+                             limits = c(-4, 8), labels=c("< -4", "0", "4", "> 8"),
+                             breaks = c(-4, 0, 4, 8),
+                             values = c(0, 0.25, 0.45, 1))
     }
   }
   
