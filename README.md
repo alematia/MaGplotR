@@ -1,7 +1,7 @@
 # MaGplotR
 ![LICENSE](https://img.shields.io/badge/license-MIT-green)
 ![R-VERSION](https://img.shields.io/badge/R-%204.2.0-blue)
-![MaGplotR-VERSION](https://img.shields.io/badge/release-v0.3.0-orange)
+![MaGplotR-VERSION](https://img.shields.io/badge/release-v0.4.0-orange)
 #### A software for Multiple Genetic Screens data visualization
 
 ![Screenshot from 2022-05-13 13-02-56](https://user-images.githubusercontent.com/95416488/168270389-73f1f6e9-dee3-468a-ae2c-611c599a8aa9.png)
