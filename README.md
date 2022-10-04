@@ -37,9 +37,9 @@ git clone https://github.com/alematia/MaGplotR.git
 ```
 
 ## Dependencies
-You can either install these packages from R terminal or by running the installation script from Linux terminal.<br/>
+You can either install these packages from R or by running the installation script from Linux terminal.<br/>
 
-- Install from R terminal:<br/>
+- Install from R. Execute the following commands in R:<br/>
 ```r
 install.packages("optparse")
 install.packages("ggplot2")
@@ -55,7 +55,7 @@ BiocManager::install("ReactomePA")
 BiocManager::install("clusterProfiler")
 ```
 - Install using installation script:<br/>
-Download `installation_magplotr.R` and run the following command in Linux terminal:
+Download `installation_magplotr.R` and run the following command in Linux or MacOS terminal:
 ```bash
 Rscript installation_magplotr.R
 ```
