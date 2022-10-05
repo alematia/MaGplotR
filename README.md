@@ -41,13 +41,9 @@ You can either install these packages from R or by running the installation scri
 
 - Install from R. Execute the following commands in R:<br/>
 ```r
-install.packages("optparse")
-install.packages("ggplot2")
-install.packages("tidyr")
-install.packages("reshape2")
-install.packages("dplyr")
-install.packages("stringr")
 install.packages("tidyverse")
+install.packages("optparse")
+install.packages("reshape2")
 install.packages("matrixStats")
 install.packages("BiocManager")
 BiocManager::install("org.Hs.eg.db")
