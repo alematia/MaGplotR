@@ -87,12 +87,13 @@ Mandatory arguments:<br/>
 Optional arguments:<br/>
 -c: (control file): **path** to the control file (no control as default). <br/>
 -o: (output directory): **path** to an existing folder where output files will be saved (input directory default).<br/>
--s: (selection): write pos or neg, for positive or negative selection (pos is default).<br/>
+-s: (selection): write pos or neg, for positive or negative selection (pos is default), i.e.: `-s neg`.<br/>
 -r: (sgRNA input directory): **path** to an existing folder where sgRNA summary files are saved.<br/>
--t: (top cutoff): number of hits to be shown in heatmaps. 25 is default.<br/>
--p: (plot format): just write one among these (png is default): png , pdf, ps, jpeg, tiff, bmp.<br/>
--g: (GO type of terms): write BP, MF or CC (no GO analysis as default).<br/>
--b: (colour blind): write y or n (no is default).<br/>
+-t: (top cutoff): number of hits to be shown in heatmaps (25 is default), i.e.: `-t 50`.<br/>
+-x: (threshold): A number: top % of hits to be used as for Pathway and Gene Ontology analysis. 1 % is default, i.e.: `-x 1.5`.<br/>
+-p: (plot format): just write one among these (png is default): png , pdf, ps, jpeg, tiff, bmp, i.e.: `-p pdf`.<br/>
+-g: (GO type of terms): write BP, MF or CC (no GO analysis as default), i.e.: `-g BP`.<br/>
+-b: (colour blind): write y or n (no is default), i.e.: `-b y`.<br/>
 
 
 ## Output plots and files
