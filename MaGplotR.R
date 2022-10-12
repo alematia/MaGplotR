@@ -57,6 +57,14 @@ parser <- add_option(parser,
 
 
 parser <- add_option(parser, 
+                     opt_str = c("-x", "--threshold"), 
+                     type = "numeric",
+                     dest = 'top.threshold',
+                     help="A number of the top % to be used as input for Pathway and Gene Ontology analysis. 1 % is default."
+)
+
+
+parser <- add_option(parser, 
                      opt_str = c("-o", "--outputdirectory"), 
                      type = "character",
                      dest = 'output.directory',
@@ -106,7 +114,6 @@ parser <- add_option(parser,
                      help="A string: 'y' or 'n'. 'n' as default."
 )
 
-
 opt = parse_args(parser)
 
 
@@ -133,6 +140,14 @@ if(!is.null(opt$top.cutoff)){
   top_cutoff <- opt$top.cutoff
 } else {
   top_cutoff <- 25
+}
+
+
+# Set top % of hits to be selected for Ontology and Pathway analyses.
+if(!is.null(opt$top.threshold)){
+  top_threshold <- (opt$top.threshold)/100
+} else {
+  top_threshold <- 0.01
 }
 
 
@@ -177,8 +192,6 @@ if(is.na(opt$control.file)){
   control_file <- read.delim(file.path(control_file_path))
   print(str_glue("- Control file detected."))
 }
-
-
 
 
 # Read sgRNA summary files.
@@ -525,7 +538,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   
   if (selection == "pos"){
     # Reactome pos
-    perc_num_pos <- round(nrow(sorted_whole_mg_pos)*0.01)  # Obtain the top 1 %.
+    perc_num_pos <- round(nrow(sorted_whole_mg_pos)*top_threshold)  # Obtain the top x %.
     pre_go_pos <- head(sorted_whole_mg_pos, perc_num_pos)
     go_genes_pos <- pre_go_pos$id
     suppressMessages(go_pos <- select(org.Hs.eg.db,
@@ -548,7 +561,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     #OrRd #RdPu #YlGn
   } else {
     # Reactome neg
-    perc_num_neg <- round(nrow(sorted_whole_mg_neg)*0.01)  # Obtain the top 1 %.
+    perc_num_neg <- round(nrow(sorted_whole_mg_neg)*top_threshold)  # Obtain the top x %.
     pre_go_neg <- head(sorted_whole_mg_neg, perc_num_neg)
     go_genes_neg <- pre_go_neg$id
     suppressMessages(go_neg <- select(org.Hs.eg.db,
