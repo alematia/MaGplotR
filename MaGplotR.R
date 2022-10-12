@@ -1,5 +1,5 @@
 ## Welcome to MaGplotR
-  
+
 options(warn=-1)
 
 ## Load libraries
@@ -375,8 +375,8 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     melted_LFC_neg <- melt(ordered_LFC_heatmap_df_neg,id.vars = c("id", "RankMeans"))  # Preparation for heatmap
     melted_mg_neg <- melt(top_mg_neg,id.vars = c("id", "RankMeans", "RankSD"))  # Preparation for heatmap
     ## Set limits to LFCs. All above 10 and below -5 is considered as max and min respectively.
-    melted_LFC_neg$value[melted_LFC_neg$value > 10] <- 10  # All LFCs above 10 are now 10.
-    melted_LFC_neg$value[melted_LFC_neg$value < -5] <- -5  # All LFCs below -5 are now -5.
+    melted_LFC_neg$value[melted_LFC_neg$value > 8] <- 8  # All LFCs above 10 are now 10.
+    melted_LFC_neg$value[melted_LFC_neg$value < -4] <- -4  # All LFCs below -5 are now -5.
     if (col_blind == "y"){
       heatmap_mg_neg <- ggplot(melted_LFC_neg, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
         geom_tile(colour="black", size=.2)+
@@ -488,6 +488,8 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     ex_table <- read.delim("~/MaGplotR/proteinatlas_gene_ex.tsv", check.names = F)
   } else if (file.exists("~/Downloads/MaGplotR/proteinatlas_gene_ex.tsv") == TRUE) {
     ex_table <- read.delim("~/Downloads/MaGplotR/proteinatlas_gene_ex.tsv", check.names = F)
+  } else if (file.exists("~/MaGplotR-main/proteinatlas_gene_ex.tsv") == TRUE) {
+    ex_table <- read.delim("~/MaGplotR/proteinatlas_gene_ex.tsv", check.names = F)
   } else {
     print(str_glue("- Gene expression file not found"))
   }
@@ -591,7 +593,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     )
   }
   print(str_glue("- Reactome Pathway Analysis completed."))
-
+  
   ## Clustering if > 2 exps.
   if (length(MaGeCK_files) > 2) {
     #### CLUSTERING by clusterProfiler. Top 1 %
