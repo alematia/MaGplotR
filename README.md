@@ -99,7 +99,7 @@ Optional arguments:<br/>
 ## Output plots and files
 #### Boxplot<br/>
 Representation of all gene LFCs in each experiment (and control if supplied). Gives a quick view of selection / scattering for every experiment.
-![genes_boxplot](https://user-images.githubusercontent.com/95416488/185506644-31ef40d2-03bb-446d-86cb-2bdd208b630c.png)
+![genes_boxplot](https://user-images.githubusercontent.com/95416488/208246015-28e49484-bed7-404f-8f47-246fbe34d701.png)
 
 
 #### Heatmap with control<br/>
