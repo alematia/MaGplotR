@@ -104,30 +104,29 @@ Representation of all gene LFCs in each experiment (and control if supplied). Gi
 
 #### Heatmap with control<br/>
 Heatmap cells are filled with each gene's LFC. Numbers inside the cells are gene ranks in each experiment. Control plot shows the LFC of control (cyan) and the mean LFC of all experiments (red) for each gene.<br/>
-![heatmap_and_control](https://user-images.githubusercontent.com/95416488/183723868-fd6a392e-33bc-4f70-abbe-5b03942470fe.png)
+![heatmap+control](https://user-images.githubusercontent.com/95416488/208427429-ba2d510b-4f5e-471f-a7ee-cbcd22d615c2.png)
+
 
 #### Colorblind heatmap<br/>
 When using the option ```-b y```
-![heatmap_control_colorblind](https://user-images.githubusercontent.com/95416488/185508941-e0138719-31c9-403f-bcc6-1782e22fef2d.png)
+![heatmap+control_colorblind](https://user-images.githubusercontent.com/95416488/208429051-1fc79ebe-53e0-44ae-8854-04226f501dcb.png)
 
 
 #### Expression plot<br/>
 Is only generated if MaGplotR folder is located in Home or Downloads directory, using the expression file that is inside of it.
-![Expression_plot](https://user-images.githubusercontent.com/95416488/185993309-a5050d94-980a-4534-83b4-c26d2946fc78.png)
-
+![Expression_plot](https://user-images.githubusercontent.com/95416488/208428071-d9d6cf2c-37ec-40b9-a1fd-f02dea01dd91.png)
 
 
 #### Reactome Pathway Analysis<br/>
 By using the top 1 % of hits, a Reactome Pathway Analysis is performed. The plot represents the number of genes (Count) that belong to a pathway.<br/>
-![ReactomePA_pos](https://user-images.githubusercontent.com/95416488/184412506-313baed1-7d76-47cd-b06b-5dc7544702db.png)
-
+![ReactomePA_pos](https://user-images.githubusercontent.com/95416488/208428131-807bfb03-f7ce-4075-b0ff-01b896eaa95f.png)
 
 
 #### Cluster plot<br/>
 Is only generated when the number of experiments (input) is > 2.
-![Screenshot from 2022-05-12 14-46-15](https://user-images.githubusercontent.com/95416488/168256030-fb922cac-a18c-40df-8be2-5eda7cffe121.png)
+![Screenshot from 2022-12-19 13-49-51](https://user-images.githubusercontent.com/95416488/208430073-2fa6c062-4d20-43d1-860a-3ddad6139383.png)
 
 
 #### Example of terminal display:<br/>
-![Terminal display](https://user-images.githubusercontent.com/95416488/184718368-b1056bc5-de78-4675-b00f-07475af99344.png)
+![Screenshot from 2022-12-19 13-46-19](https://user-images.githubusercontent.com/95416488/208429514-11102732-432f-425e-af1d-450d348037ec.png)
 
