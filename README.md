@@ -104,7 +104,7 @@ Representation of all gene LFCs in each experiment (and control if supplied). Gi
 
 #### Heatmap with control<br/>
 Heatmap cells are filled with each gene's LFC. Numbers inside the cells are gene ranks in each experiment. Control plot shows the LFC of control (cyan) and the mean LFC of all experiments (red) for each gene.<br/>
-![heatmap+control](https://user-images.githubusercontent.com/95416488/208427429-ba2d510b-4f5e-471f-a7ee-cbcd22d615c2.png)
+![heatmap+control](https://user-images.githubusercontent.com/95416488/210894756-0dd52b21-4b78-4300-895e-65293ee4fd3a.png)
 
 
 #### Colorblind heatmap<br/>
@@ -114,12 +114,12 @@ When using the option ```-b y```
 
 #### Expression plot<br/>
 Is only generated if MaGplotR folder is located in Home or Downloads directory, using the expression file that is inside of it.
-![Expression_plot](https://user-images.githubusercontent.com/95416488/208428071-d9d6cf2c-37ec-40b9-a1fd-f02dea01dd91.png)
+![Expression_plot](https://user-images.githubusercontent.com/95416488/210894845-83a55a75-cc65-45b0-9bb7-72c3d197527e.png)
 
 
 #### Reactome Pathway Analysis<br/>
 By using the top 1 % of hits, a Reactome Pathway Analysis is performed. The plot represents the number of genes (Count) that belong to a pathway.<br/>
-![ReactomePA_pos](https://user-images.githubusercontent.com/95416488/208428131-807bfb03-f7ce-4075-b0ff-01b896eaa95f.png)
+![ReactomePA_pos](https://user-images.githubusercontent.com/95416488/210894920-c16d4531-98c6-4356-aae5-7ca203932773.png)
 
 
 #### Cluster plot<br/>
