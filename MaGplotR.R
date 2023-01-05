@@ -340,7 +340,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
       heatmap_mg_pos <- ggplot(melted_LFC_pos, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
         geom_tile(colour="black", size=.2)+
         ggtitle("Gene LFC")+
-        geom_text(size=1.5, aes(label = round(melted_mg_pos$value, 1)))+
+        geom_text(size=2, aes(label = round(melted_mg_pos$value, 1)))+
         theme(panel.background = element_blank(),
               legend.position = "left",
               axis.text.x = element_text(angle = 45, hjust = 1),
@@ -354,7 +354,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
       heatmap_mg_pos <- ggplot(melted_LFC_pos, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
         geom_tile(colour="black", size=.2)+
         ggtitle("Gene LFC")+
-        geom_text(size=1.5, aes(label = round(melted_mg_pos$value, 1)))+
+        geom_text(size=2, aes(label = round(melted_mg_pos$value, 1)))+
         theme(panel.background = element_blank(),
               legend.position = "left",
               axis.text.x = element_text(angle = 45, hjust = 1),
@@ -394,7 +394,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
       heatmap_mg_neg <- ggplot(melted_LFC_neg, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
         geom_tile(colour="black", size=.2)+
         ggtitle("Gene LFC")+
-        geom_text(size=1.5, aes(label = round(melted_mg_neg$value, 1)))+
+        geom_text(size=2, aes(label = round(melted_mg_neg$value, 1)))+
         theme(panel.background = element_blank(),
               legend.position = "left",
               axis.text.x = element_text(angle = 45, hjust = 1),
@@ -408,7 +408,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
       heatmap_mg_neg <- ggplot(melted_LFC_neg, aes(x=variable, y=reorder(id, -RankMeans), fill=value))+
         geom_tile(colour="black", size=.2)+
         ggtitle("Gene LFC")+
-        geom_text(size=1.5, aes(label = round(melted_mg_neg$value, 1)))+
+        geom_text(size=2, aes(label = round(melted_mg_neg$value, 1)))+
         theme(panel.background = element_blank(),
               legend.position = "left",
               axis.text.x = element_text(angle = 45, hjust = 1),
@@ -484,11 +484,11 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     # Save pos or neg
     if (selection == "pos"){
       suppressMessages(ggsave(path = output.directory, filename = paste0("self_enrichment_pos.", plot.format),
-                              plot = self_plot_pos, device = plot.format))
+                              plot = self_plot_pos, device = plot.format, width = 5))
       print(str_glue("- Self enrichment plot (positive selection) saved in output directory."))
     } else {
       suppressMessages(ggsave(path = output.directory, filename = paste0("self_enrichment_neg.", plot.format),
-                              plot = self_plot_neg, device = plot.format))
+                              plot = self_plot_neg, device = plot.format, width = 5))
       print(str_glue("- Self enrichment plot (negative selection) saved in output directory."))
     }
   }
@@ -523,11 +523,11 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
       scale_size_continuous("Expression (nTPM)", limits = c(0, max(short_ex_table2$value)), 
                             range = c(1.5,5))+
       scale_colour_discrete("Expression")+
-      theme(panel.background = element_blank())+
+      theme(panel.background = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1))+
       xlab("Cell line")+
       ylab("Gene")
     
-    suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("Expression_plot.", plot.format),
+    suppressMessages(ggsave(width = 5, path = output.directory, filename = paste0("Expression_plot.", plot.format),
                             plot = plot_ex, device = plot.format))
     print(str_glue("- Gene expression plot saved in output directory."))
   }
@@ -552,9 +552,11 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     pathways_pos_plot <- ggplot(head(pathways_pos@result,10), aes(x = 0, y = reorder(Description, Count)))+
       geom_point(stat = "identity", aes(size=Count, colour=p.adjust))+
       scale_size(range = c(4,13))+
-      theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
-            axis.line.x = element_line(color="black"), axis.text.x = element_blank(),
-            axis.ticks.x = element_blank())+
+      theme(panel.background = element_blank(), axis.line.y = element_blank(),
+            axis.line.x = element_blank(), axis.text.x = element_blank(),
+            axis.ticks.x = element_blank(),
+            plot.margin = margin(.5, 5, .5, 5, "cm"))+
+      scale_y_discrete(labels = function(x) str_wrap(x, width = 40))+
       ylab("Pathway")+
       xlab("Count")+
       scale_color_distiller(palette = "RdPu", values = c(0, 0.25, 1))
@@ -575,9 +577,11 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     pathways_neg_plot <- ggplot(head(pathways_neg@result,10), aes(x = 0, y = reorder(Description, Count)))+
       geom_point(stat = "identity", aes(size=Count, colour=p.adjust))+
       scale_size(range = c(4,13))+
-      theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
-            axis.line.x = element_line(color="black"), axis.text.x = element_blank(),
-            axis.ticks.x = element_blank())+
+      theme(panel.background = element_blank(), axis.line.y = element_blank(),
+            axis.line.x = element_blank(), axis.text.x = element_blank(),
+            axis.ticks.x = element_blank(),
+            plot.margin = margin(.5, 5, .5, 5, "cm"))+
+      scale_y_discrete(labels = function(x) str_wrap(x, width = 40))+
       ylab("Pathway")+
       xlab("Count")+
       scale_color_distiller(palette = "RdPu", values = c(0, 0.25, 1))
