@@ -109,7 +109,7 @@ Heatmap cells are filled with each gene's LFC. Numbers inside the cells are gene
 
 #### Colorblind heatmap<br/>
 When using the option ```-b y```
-![heatmap+control_colorblind](https://user-images.githubusercontent.com/95416488/208429051-1fc79ebe-53e0-44ae-8854-04226f501dcb.png)
+![heatmap+control_colorblind](https://user-images.githubusercontent.com/95416488/210895190-5a1208d0-c7f3-48a5-b454-d7ee1e9d7acc.png)
 
 
 #### Expression plot<br/>
