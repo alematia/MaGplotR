@@ -21,7 +21,10 @@ Additionally, a control experiment `gene_summary.txt` file can be used to compar
 
 ## Citation
 If you use this software please cite:<br/>
-[PREPRINT] / [PUBLICATION]<br/>
+<br/>
+**MaGplotR: a software for the analysis and visualization of multiple MaGeCK screen datasets through aggregation**<br/>
+Alejandro Matia, Maria M. Lorenzo, Duo Peng<br/>
+bioRxiv 2023.01.12.523725; doi: https://doi.org/10.1101/2023.01.12.523725<br/>
 
 
 ## Motivation
