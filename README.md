@@ -101,8 +101,15 @@ Optional arguments:<br/>
 ## Output plots and files
 #### Boxplot<br/>
 Representation of all gene LFCs in each experiment (and control if supplied). Gives a quick view of selection / scattering for every experiment.
-![genes_boxplot](https://user-images.githubusercontent.com/95416488/208246015-28e49484-bed7-404f-8f47-246fbe34d701.png)
+<p align="center">
+<img src="https://user-images.githubusercontent.com/95416488/208246015-28e49484-bed7-404f-8f47-246fbe34d701.png" width="650" height="650" align="center">
+</p>
 
+#### PCA plot<br/>
+PCA dimensionality reduction of the rank scores of every experiment. Groups experiments by similarity.
+<p align="center">
+<img src="https://user-images.githubusercontent.com/95416488/236545056-67e28888-95ca-4da2-b05b-6febb090d700.png" width="650" height="650" align="center">
+</p>
 
 #### Heatmap with control<br/>
 Heatmap cells are filled with each gene's LFC. Numbers inside the cells are gene ranks in each experiment. Control plot shows the LFC of control (cyan) and the mean LFC of all experiments (red) for each gene.<br/>
@@ -116,8 +123,9 @@ When using the option ```-b y```
 
 #### Expression plot<br/>
 Is only generated if MaGplotR folder is located in Home or Downloads directory, using the expression file that is inside of it.
-![Expression_plot](https://user-images.githubusercontent.com/95416488/210894845-83a55a75-cc65-45b0-9bb7-72c3d197527e.png)
-
+<p align="center">
+<img src="https://user-images.githubusercontent.com/95416488/210894845-83a55a75-cc65-45b0-9bb7-72c3d197527e.png" width="464" height="650" align="center">
+</p>
 
 #### Reactome Pathway Analysis<br/>
 By using the top 1 % of hits, a Reactome Pathway Analysis is performed. The plot represents the number of genes (Count) that belong to a pathway.<br/>
