@@ -125,7 +125,7 @@ By using the top 1 % of hits, a Reactome Pathway Analysis is performed. The plot
 
 
 #### Cluster plot<br/>
-Is only generated when the number of experiments (input) is > 2.
+Is only generated when the number of experiments (input) is > 2. Genes used for clustering are the top % genes chosen by user.
 ![Screenshot from 2022-12-19 13-49-51](https://user-images.githubusercontent.com/95416488/208430073-2fa6c062-4d20-43d1-860a-3ddad6139383.png)
 
 
