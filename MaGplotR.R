@@ -309,11 +309,43 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   }
   suppressMessages(ggsave(path = output.directory, filename = paste0("genes_boxplot.", plot.format), plot = boxplot, device = plot.format))
   print(str_glue("- Genes boxplot saved in output directory."))
+
   
-  ## 2. Heatmaps + record csv files (pos and neg).
-  ## These 2 lines already existed in the code for the control df purpose.
+
+  ## These 2 lines already exist in the code for the control df purpose.
   sub_mg_LFC_files <- id_LFC_maker(input_files_txt)
   merged_mg_LFC <- sub_mg_LFC_files %>% reduce(inner_join, by = "id")  # Merge all dfs by id
+  
+  
+  ## PCA plot. Calculates PCA scores and plots each experiment in 2 PCA dimensions.
+  merged_mg_LFC_no_id <- merged_mg_LFC[, -1]
+  
+  pca <- prcomp(t(merged_mg_LFC_no_id), scale=T)
+  pca_scores <- data.frame(Experiment = colnames(merged_mg_LFC_no_id), PCA1 = pca$x[, 1], PCA2 = pca$x[, 2])
+  
+  max_PCA1 <- max(abs(pca_scores$PCA1))
+  max_PCA2 <- max(abs(pca_scores$PCA2))
+  
+  pca_plot <- ggplot(pca_scores, aes(x = PCA1, y = PCA2, label = Experiment, color = Experiment))+
+    geom_point(show.legend = F, size=2)+
+    geom_text(vjust = 1.25, hjust = 1.25, size = 5, color = "black")+
+    theme_bw()+
+    theme(panel.background = element_blank(),
+          axis.text.x = element_text(angle = 45, hjust = 1),
+          axis.title.x = element_blank(),
+          axis.title.y = element_blank())+
+    labs(title = "PCA plot",
+         x = "Principal Component 1",
+         y = "Principal Component 2")+
+    geom_hline(yintercept = 0, linetype = "dashed", color = "black")+
+    geom_vline(xintercept = 0, linetype = "dashed", color = "black")+
+    scale_x_continuous(limits = c(-max_PCA1, max_PCA1), breaks = scales::pretty_breaks(n = 5))+
+    scale_y_continuous(limits = c(-max_PCA2, max_PCA2), breaks = scales::pretty_breaks(n = 5))
+  
+  suppressMessages(ggsave(path = output.directory, filename = paste0("pca_plot.", plot.format), plot = pca_plot, device = plot.format))
+  print(str_glue("- PCA plot saved in output directory."))
+  
+  ## 2. Heatmaps + record csv files (pos and neg).
   #######################################################
   if (selection == "pos"){
     ## Preparation for pos
