@@ -169,7 +169,11 @@ selection = opt$selection
 
 
 # Select Gene Ontology option
-if(!is.null(opt$gene.ontology)){gene_ontology <- opt$gene.ontology}
+if(!is.null(opt$gene.ontology)){
+  gene_ontology_raw <- opt$gene.ontology
+  split_string <- strsplit(gene_ontology_raw, split = ",", fixed = TRUE)
+  result_go_vector <- unlist(split_string)
+}
 
 
 if(!is.null(opt$colour.blind)){
@@ -762,32 +766,37 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
   # GO ENRICHMENT ANALYSIS - only if user chooses
   if(!is.null(opt$gene.ontology)){
     if(selection == "pos"){
-      suppressMessages(go_bp_pos <- enrichGO(as.data.frame(go_pos)$ENTREZID, 'org.Hs.eg.db', ont = gene_ontology, pvalueCutoff=0.01))
-      go_bp_pos_plot <- ggplot(head(go_bp_pos@result,10), aes(x = Count, y = reorder(Description, Count)))+
-        geom_point(aes(size=Count, colour=p.adjust))+
-        scale_size(range = c(4,12)) +
-        theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
-              axis.line.x = element_line(color="black"))+
-        scale_color_gradient(low = "springgreen4", high = "chocolate1")+
-        xlim(min(go_bp_pos@result$Count), max(go_bp_pos@result$Count))+
-        ylab(gene_ontology)
-      suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("GO_", gene_ontology, "_pos.", plot.format), plot = go_bp_pos_plot, device = plot.format))
-      print(str_glue("- GO Analysis completed."))
+      for (i in result_go_vector){
+        suppressMessages(go_bp_pos <- enrichGO(as.data.frame(go_pos)$ENTREZID, 'org.Hs.eg.db', ont = i, pvalueCutoff=0.01))
+        go_bp_pos_plot <- ggplot(head(go_bp_pos@result,10), aes(x = Count, y = reorder(Description, Count)))+
+          geom_point(aes(size=Count, colour=p.adjust))+
+          scale_size(range = c(4,12)) +
+          theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
+                axis.line.x = element_line(color="black"))+
+          scale_color_gradient(low = "springgreen4", high = "chocolate1")+
+          xlim(min(go_bp_pos@result$Count), max(go_bp_pos@result$Count))+
+          ylab(i)
+        suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("GO_", i, "_pos.", plot.format), plot = go_bp_pos_plot, device = plot.format))
+        print(str_glue(paste0("- GO ", i, " Analysis completed.")))
+      }
     } else {
-      suppressMessages(go_bp_neg <- enrichGO(as.data.frame(go_neg)$ENTREZID, 'org.Hs.eg.db', ont = gene_ontology, pvalueCutoff=0.01))
-      go_bp_neg_plot <- ggplot(head(go_bp_neg@result,10), aes(x = Count, y = reorder(Description, Count)))+
-        geom_point(aes(size=Count, colour=p.adjust))+
-        scale_size(range = c(4,12)) +
-        theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
-              axis.line.x = element_line(color="black"))+
-        scale_color_gradient(low = "springgreen4", high = "chocolate1")+
-        xlim(min(go_bp_neg@result$Count), max(go_bp_neg@result$Count))+
-        ylab("")
-      suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("GO_", gene_ontology, "_neg.", plot.format), plot = go_bp_neg_plot, device = plot.format))
-      print(str_glue("- GO Analysis completed."))
-    }
-  }
-}
+      for (i in result_go_vector){
+        suppressMessages(go_bp_neg <- enrichGO(as.data.frame(go_neg)$ENTREZID, 'org.Hs.eg.db', ont = i, pvalueCutoff=0.01))
+        go_bp_neg_plot <- ggplot(head(go_bp_neg@result,10), aes(x = Count, y = reorder(Description, Count)))+
+          geom_point(aes(size=Count, colour=p.adjust))+
+          scale_size(range = c(4,12)) +
+          theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
+                axis.line.x = element_line(color="black"))+
+          scale_color_gradient(low = "springgreen4", high = "chocolate1")+
+          xlim(min(go_bp_neg@result$Count), max(go_bp_neg@result$Count))+
+          ylab(i)
+        suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("GO_", i, "_neg.", plot.format), plot = go_bp_neg_plot, device = plot.format))
+        print(str_glue(paste0("- GO ", i, " Analysis completed.")))
+      } # end of the 2nd "for" loop
+    } # end of if/else statement for neg
+  } # end of if/else statement for optional GO analysis
+
+} # end of gene analysis function
 
 
 # sgrna analysis
