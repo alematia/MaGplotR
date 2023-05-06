@@ -491,7 +491,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
       self_plot_pos <- ggplot(trial_plot_pos, aes(x = value, y = reorder(id, -rank), col = lfcs, group = lfcs))+
         geom_point(size=1.75)+
         scale_color_manual(values = c("coral2", "lightseagreen"),
-                           labels = c("Control Expt", "Averg. Expts"))+
+                           labels = c("Control Expt", "Averg. Expt"))+
         xlim(floor(min(trial_plot_pos$value)), max(trial_plot_pos$value))+
         theme(text = element_text(size=12), legend.position = "right", panel.grid.major.y = element_line(colour="black"), 
               panel.grid.major.x = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
@@ -804,40 +804,38 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
 # sgrna analysis
 sgrna_analysis <- function(sginput_files_txt){
   
-  # Sub df with columns sgRNA, Gene and LFC.
   sgrna_shortener <- function(sginput_files){
     num <- 1
     sgsub_input_files <- c()
     for (i in sginput_files){
-      sgsub_input_files[[num]] <- data.frame(i$sgrna,i$Gene, i$LFC)
-      colnames(sgsub_input_files[[num]]) <- c("sgRNA", "Gene", "LFC")
+      sgsub_input_files[[num]] <- data.frame(i$sgrna, i$LFC)
+      colnames(sgsub_input_files[[num]]) <- c(gsub(".sgrna_summary.txt", "", sgMaGeCK_files[num]), "LFC")
       num <- num + 1
     }
     return(sgsub_input_files)
   }
   
   
-  ## Appends a column with the experiment number.
-  col_appender <- function(sgsub_input_files){
+  # Melts gene summary sub dfs
+  sgrna_melter <- function(sgsub_input_files){
+    melted_sgsub_input_files <- c()
     num <- 1
     for (i in sgsub_input_files){
-      nrows <- nrow(i)
-      sgsub_input_files[[num]]$exp_number <- rep(c(num), times=nrows)
-      num <- num + 1   
+      melted_sgsub_input_files[[num]] <- reshape2::melt(i, id.vars = 2)
+      num <- num + 1
     }
-    return(sgsub_input_files)
+    return(melted_sgsub_input_files)
   }
-  
   
   # Execute functions
   sgsub_input_files <- sgrna_shortener(sginput_files_txt)
-  sgsub_input_files_coln <- col_appender(sgsub_input_files)
+  sgsub_input_files_coln <- sgrna_melter(sgsub_input_files)
   sgbound <- bind_rows(as.vector(sgsub_input_files_coln))  # Binds all sgRNA sub dfs
   
   # Create boxplot for sgRNAs' LFCs
-  sgboxplot <- ggplot(sgbound, aes(x = factor(exp_number), y = LFC))+
-    geom_boxplot(aes(colour=factor(exp_number)), outlier.shape = NA)+
-    geom_jitter(position = position_jitter(width = 0.25) , size=0.005, alpha = 0.05, aes(colour=factor(exp_number)))+
+  sgboxplot <- ggplot(sgbound, aes(x = variable, y = LFC))+
+    geom_boxplot(aes(colour = variable), outlier.shape = NA)+
+    geom_jitter(position = position_jitter(width = 0.25) , size=0.005, alpha = 0.05, aes(colour = variable))+
     xlab("Test experiments")+
     ylab("sgRNA Log2 Fold Change (LFC)")+
     theme(legend.position = "None", axis.text.x = element_text(size = 10))
