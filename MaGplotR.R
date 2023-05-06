@@ -490,14 +490,16 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
       trial_plot_pos <- control_merge_pos %>% pivot_longer(cols = c(LFC, expLFCMeans), names_to = "lfcs")  #pivot plot
       self_plot_pos <- ggplot(trial_plot_pos, aes(x = value, y = reorder(id, -rank), col = lfcs, group = lfcs))+
         geom_point(size=1.75)+
-        scale_color_manual(values = c("coral2", "lightseagreen"))+
+        scale_color_manual(values = c("coral2", "lightseagreen"),
+                           labels = c("Control Expt", "Averg. Expts"))+
         xlim(floor(min(trial_plot_pos$value)), max(trial_plot_pos$value))+
-        theme(text = element_text(size=12), legend.position = "none", panel.grid.major.y = element_line(colour="black"), 
+        theme(text = element_text(size=12), legend.position = "right", panel.grid.major.y = element_line(colour="black"), 
               panel.grid.major.x = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
               axis.line.x = element_blank(), axis.line.y = element_blank(), axis.text.x= element_text(),
               axis.ticks.x = element_line(), axis.ticks.y = element_blank(), axis.title.y = element_blank())+
         xlab("LFC")+
-        geom_vline(xintercept=0, linetype="dashed", color = "red")
+        geom_vline(xintercept=0, linetype="dashed", color = "red")+
+        labs(color = "LFCs")
     } else {
       ## Control LFC plot for negative heatmap
       simple_top_neg <- data.frame(id = top_mg_neg$id, rank = 1:length(top_mg_neg$id))
