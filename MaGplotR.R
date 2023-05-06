@@ -491,7 +491,7 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
       self_plot_pos <- ggplot(trial_plot_pos, aes(x = value, y = reorder(id, -rank), col = lfcs, group = lfcs))+
         geom_point(size=1.75)+
         scale_color_manual(values = c("coral2", "lightseagreen"),
-                           labels = c("Control Expt", "Averg. Expt"))+
+                           labels = c("Averg. Expt", "Control Expt"))+
         xlim(floor(min(trial_plot_pos$value)), max(trial_plot_pos$value))+
         theme(text = element_text(size=12), legend.position = "right", panel.grid.major.y = element_line(colour="black"), 
               panel.grid.major.x = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
@@ -509,7 +509,8 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
       trial_plot_neg <- control_merge_neg %>% pivot_longer(cols = c(LFC, expLFCMeans), names_to = "lfcs")  #pivot plot
       self_plot_neg <- ggplot(trial_plot_neg, aes(x = value, y = reorder(id, -rank), col = lfcs, group = lfcs))+
         geom_point(size=1.75)+
-        scale_color_manual(values = c("coral2", "lightseagreen"))+
+        scale_color_manual(values = c("coral2", "lightseagreen"),
+                           labels = c("Averg. Expt", "Control Expt"))+
         xlim(floor(min(trial_plot_neg$value)), max(trial_plot_neg$value))+
         theme(text = element_text(size=12), legend.position = "none", panel.grid.major.y = element_line(colour="black"), 
               panel.grid.major.x = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
