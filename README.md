@@ -72,7 +72,7 @@ sudo apt install libcurl4-openssl-dev libssl-dev libxml2-dev libfontconfig1-dev 
 3) Put all the gene summary files you want to analyze in a designated folder. Do not put your control file in this folder. This will be the input directory (-i). These files names usually end with ".gene_summary.txt" as MaGeCK output. MaGplotR uses the experiment name from the filename (i.e. for "exp7.gene_summary.txt" file, "exp7" will be displayed in the plots).<br/>
 4) For simplicity, we recommend you to put the input folder, the control file, and the output folder (optionally create it first) in the MaGplotR folder where the program files are stored.<br/>
 5) Next, open a terminal in Linux, MacOS or Windows and type the commands as in the examples. Make sure you give the path to the file/folder as argument, either the complete path, or from current directory: ```./input_directory/``` . You can also provide an output folder, where files will be saved, otherwise, input directory is default.
-6) WINDOWS: if you are using the tool from a Windows terminal, make sure to assign the R to the PATH first like this: ```$env:Path += ';C:\Program Files\R\R-4.2.1\bin\x64\' ```
+6) WINDOWS: if you are using the tool from a Windows terminal, make sure to assign R to the PATH first like this: ```$env:Path += ';C:\Program Files\R\R-4.2.1\bin\x64\' ```
 <br/>
 
 Examples:
@@ -80,7 +80,7 @@ Examples:
 Rscript MaGplotR.R -i example_test_files/
 ```
 ```bash
-Rscript MaGplotR.R -i path_to_results_directory/ -o path_to_output_directory/ -c path_to_control_file -s neg -t 50 -p png -r path_to_sgRNA_input_directory -g MF -b y
+Rscript MaGplotR.R -i path_to_results_directory/ -o path_to_output_directory/ -c path_to_control_file -s neg -t 50 -p png -r path_to_sgRNA_input_directory -g BP,MF -b y
 ```
 ### Options:
 Mandatory arguments:<br/>
@@ -94,7 +94,7 @@ Optional arguments:<br/>
 -t: (top cutoff): number of hits to be shown in heatmaps (25 is default), i.e.: `-t 50`.<br/>
 -x: (threshold): top % of hits to be used as for Pathway and Gene Ontology analysis. 1 % is default. i.e.: `-x 1.5`.<br/>
 -p: (plot format): just write one among these (png is default): png , pdf, ps, jpeg, tiff, bmp, i.e.: `-p pdf`.<br/>
--g: (GO type of terms): write BP, MF or CC (no GO analysis as default), i.e.: `-g BP`.<br/>
+-g: (GO type of terms): write BP, MF or CC (no GO analysis as default) i.e.: `-g BP`. Also write several parameters at once: i.e.: `-g BP,MF,CC`.<br/>
 -b: (colour blind): write y or n (no is default), i.e.: `-b y`.<br/>
 
 
