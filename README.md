@@ -94,7 +94,7 @@ Optional arguments:<br/>
 -t: (top cutoff): number of hits to be shown in heatmaps (25 is default), i.e.: `-t 50`.<br/>
 -x: (threshold): top % of hits to be used as for Pathway and Gene Ontology analysis. 1 % is default. i.e.: `-x 1.5`.<br/>
 -p: (plot format): just write one among these (png is default): png , pdf, ps, jpeg, tiff, bmp, i.e.: `-p pdf`.<br/>
--g: (GO type of terms): write BP, MF or CC (no GO analysis as default) i.e.: `-g BP`. Also write several parameters at once: i.e.: `-g BP,MF,CC`.<br/>
+-g: (GO categories): write BP, MF or CC (no GO analysis as default) i.e.: `-g BP`. Also write several parameters at once: i.e.: `-g BP,MF,CC`.<br/>
 -b: (colour blind): write y or n (no is default), i.e.: `-b y`.<br/>
 
 
