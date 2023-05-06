@@ -115,7 +115,7 @@ PCA dimensionality reduction of the rank scores of every experiment. Groups expe
 Heatmap cells are filled with each gene's LFC. Numbers inside the cells are gene ranks in each experiment. Control plot shows the LFC of control (cyan) and the mean LFC of all experiments (red) for each gene.<br/>
 
 <p float="left">
-  <img src="https://user-images.githubusercontent.com/95416488/210894756-0dd52b21-4b78-4300-895e-65293ee4fd3a.png" width="800" height="480" align="center">
+  <img src="https://user-images.githubusercontent.com/95416488/210894756-0dd52b21-4b78-4300-895e-65293ee4fd3a.png" width="700" height="420" align="center">
   <img src="https://user-images.githubusercontent.com/95416488/236625944-3c310c1f-aa5e-4243-9d41-5e68601f88a3.png" width="100" height="70" align="center">
  </p>
 
@@ -123,7 +123,7 @@ Heatmap cells are filled with each gene's LFC. Numbers inside the cells are gene
 When using the option ```-b y```
 
 <p float="left">
-  <img src="https://user-images.githubusercontent.com/95416488/210895190-5a1208d0-c7f3-48a5-b454-d7ee1e9d7acc.png" width="800" height="480" align="center">
+  <img src="https://user-images.githubusercontent.com/95416488/210895190-5a1208d0-c7f3-48a5-b454-d7ee1e9d7acc.png" width="700" height="420" align="center">
   <img src="https://user-images.githubusercontent.com/95416488/236625944-3c310c1f-aa5e-4243-9d41-5e68601f88a3.png" width="100" height="70" align="center">
  </p>
 
