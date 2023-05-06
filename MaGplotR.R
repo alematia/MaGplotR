@@ -525,20 +525,25 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
     }
   }
   
-  ## Gene Expression
-  ## Tries to find expression file in current dir, home and Downloads. If found, proceed.
-  if (file.exists("./MaGplotR/proteinatlas_gene_ex.tsv") == TRUE){
-    ex_table <- read.delim("./MaGplotR/proteinatlas_gene_ex.tsv", check.names = F) ##### Give path to file
-  } else if (file.exists("~/MaGplotR/proteinatlas_gene_ex.tsv") == TRUE) {
-    ex_table <- read.delim("~/MaGplotR/proteinatlas_gene_ex.tsv", check.names = F)
-  } else if (file.exists("~/Downloads/MaGplotR/proteinatlas_gene_ex.tsv") == TRUE) {
-    ex_table <- read.delim("~/Downloads/MaGplotR/proteinatlas_gene_ex.tsv", check.names = F)
-  } else if (file.exists("~/MaGplotR-main/proteinatlas_gene_ex.tsv") == TRUE) {
-    ex_table <- read.delim("~/MaGplotR/proteinatlas_gene_ex.tsv", check.names = F)
-  } else {
-    print(str_glue("- Gene expression file not found"))
-  }
-  ## If file is found, variable is created and then creates the plot.
+  ## Gene Expression. Searches for the file inside the folder recursively
+  ex_file <- list.files(path = getwd(), pattern = paste0("proteinatlas_gene_ex.tsv"), recursive = TRUE, full.names = TRUE)
+  ex_table <- read.delim(ex_file, check.names = F)
+  
+  
+  ## Deprecated (looks for the file in several folders)
+  #if (file.exists("./MaGplotR/proteinatlas_gene_ex.tsv") == TRUE){
+  #  ex_table <- read.delim("./MaGplotR/proteinatlas_gene_ex.tsv", check.names = F) ##### Give path to file
+  #} else if (file.exists("~/MaGplotR/proteinatlas_gene_ex.tsv") == TRUE) {
+  #  ex_table <- read.delim("~/MaGplotR/proteinatlas_gene_ex.tsv", check.names = F)
+  #} else if (file.exists("~/Downloads/MaGplotR/proteinatlas_gene_ex.tsv") == TRUE) {
+  #  ex_table <- read.delim("~/Downloads/MaGplotR/proteinatlas_gene_ex.tsv", check.names = F)
+  #} else if (file.exists("~/MaGplotR-main/proteinatlas_gene_ex.tsv") == TRUE) {
+  #  ex_table <- read.delim("~/MaGplotR/proteinatlas_gene_ex.tsv", check.names = F)
+  #} else {
+  #  print(str_glue("- Gene expression file not found"))
+  #}
+  
+  ## If file is found, a variable is created and then creates the plot.
   if (exists("ex_table")){
     if (selection == "pos") {
       ordered_ex_table <- na.omit(ex_table[match(ordered_vector_pos, ex_table$Gene),])
@@ -764,7 +769,8 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
         theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
               axis.line.x = element_line(color="black"))+
         scale_color_gradient(low = "springgreen4", high = "chocolate1")+
-        xlim(min(go_bp_pos@result$Count), max(go_bp_pos@result$Count))
+        xlim(min(go_bp_pos@result$Count), max(go_bp_pos@result$Count))+
+        ylab(gene_ontology)
       suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("GO_", gene_ontology, "_pos.", plot.format), plot = go_bp_pos_plot, device = plot.format))
       print(str_glue("- GO Analysis completed."))
     } else {
@@ -775,7 +781,8 @@ gene_analysis <- function(x = input_files_txt, y = control_file){
         theme(panel.background = element_blank(), axis.line.y = element_line(color="black"),
               axis.line.x = element_line(color="black"))+
         scale_color_gradient(low = "springgreen4", high = "chocolate1")+
-        xlim(min(go_bp_neg@result$Count), max(go_bp_neg@result$Count))
+        xlim(min(go_bp_neg@result$Count), max(go_bp_neg@result$Count))+
+        ylab("")
       suppressMessages(ggsave(width = 10, path = output.directory, filename = paste0("GO_", gene_ontology, "_neg.", plot.format), plot = go_bp_neg_plot, device = plot.format))
       print(str_glue("- GO Analysis completed."))
     }
