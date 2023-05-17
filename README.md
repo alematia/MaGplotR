@@ -108,7 +108,7 @@ Representation of all gene LFCs in each experiment (and control if supplied). Gi
 #### PCA plot<br/>
 PCA dimensionality reduction of the rank scores of every experiment. Groups experiments by similarity.
 <p align="center">
-<img src="https://user-images.githubusercontent.com/95416488/236545056-67e28888-95ca-4da2-b05b-6febb090d700.png" width="650" height="650" align="center">
+<img src="https://github.com/alematia/MaGplotR/assets/95416488/b0e0803d-092b-47a4-8e3d-7c773de1be31.png" width="650" height="650" align="center">
 </p>
 
 #### Heatmap with control<br/>
