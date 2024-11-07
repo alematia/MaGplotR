@@ -61,7 +61,7 @@ Rscript installation_magplotr.R
 *Note: some of these packages like tidyverse may have additional dependencies: install libcurl, openssl, libxml-2.0, libfontconfig1-dev and libfreetype6-dev libraries. Example for debian based systems:
 
 ```bash
-sudo apt install libcurl4-openssl-dev libssl-dev libxml2-dev libfontconfig1-dev libfreetype6-dev libtiff5-dev
+sudo apt install libcurl4-openssl-dev libssl-dev libxml2-dev libfontconfig1-dev libfreetype6-dev libtiff5-dev libharfbuzz-dev libfribidi-dev
 ```
 
 
